@@ -91,5 +91,12 @@ namespace Calculator
             resultBox.Foreground = Brushes.White;
             resultBox.Text = "Nothing yet...";
         }
+
+        private void Backspace_Click(object sender, RoutedEventArgs e)
+        {
+            int caretIndex = inputBox.CaretIndex;
+            inputBox.Text = inputBox.Text.Remove(caretIndex - 1, 1);
+            inputBox.CaretIndex = caretIndex - 1;
+        }
     }
 }
