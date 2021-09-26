@@ -24,5 +24,29 @@ namespace Calculator
 		{
 			InitializeComponent();
 		}
+
+		private void ResetResultBox()
+		{
+			resultBox.Foreground = Brushes.Gray;
+			resultBox.Text = "Result";
+		}
+
+		private void InputBox_GotFocus(object sender, RoutedEventArgs e)
+		{
+			if (inputBox.Foreground == Brushes.Gray)
+			{
+				inputBox.Clear();
+				inputBox.Foreground = Brushes.White;
+			}
+		}
+
+		private void InputBox_LostFocus(object sender, RoutedEventArgs e)
+		{
+			if (string.IsNullOrWhiteSpace(inputBox.Text))
+			{
+				inputBox.Foreground = Brushes.Gray;
+				inputBox.Text = "Input";
+			}
+		}
 	}
 }

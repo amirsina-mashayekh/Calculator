@@ -127,7 +127,6 @@
 	<Style x:Key="TextBoxesStyle" TargetType="{x:Type TextBox}">
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
 		<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-		<Setter Property="TextElement.Foreground" Value="White"/>
 		<Setter Property="CaretBrush" Value="White"/>
 		<Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
 		<Setter Property="HorizontalContentAlignment" Value="Left"/>

@@ -14,13 +14,14 @@
 			<RowDefinition Height="6*" x:Name="buttonsRow"/>
 		</Grid.RowDefinitions>
 
-		<TextBox Style="{DynamicResource TextBoxesStyle}" x:Name="inputBox" Grid.Row="0" TextWrapping="Wrap"
-				 Background="Transparent" BorderBrush="{x:Null}" FontSize="22" VerticalScrollBarVisibility="Auto"
-				 VerticalContentAlignment="Bottom"/>
+		<TextBox Style="{DynamicResource TextBoxesStyle}" x:Name="inputBox" Text="Input" Grid.Row="0" TextWrapping="Wrap"
+				 Background="Transparent" Foreground="Gray" BorderBrush="{x:Null}" FontSize="22"
+				 VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Bottom"
+				 GotFocus="InputBox_GotFocus" LostFocus="InputBox_LostFocus"/>
 
-		<TextBox Style="{DynamicResource TextBoxesStyle}" x:Name="resultBox" Grid.Row="1" TextWrapping="NoWrap"
-				 Background="#FF201F1E" BorderBrush="{x:Null}" FontSize="32" HorizontalScrollBarVisibility="Auto"
-				 VerticalContentAlignment="Center" Height="75px">
+		<TextBox Style="{DynamicResource TextBoxesStyle}" x:Name="resultBox" Text="Result" Grid.Row="1" TextWrapping="NoWrap"
+				 Background="#FF201F1E" Foreground="Gray" BorderBrush="{x:Null}" FontSize="32"
+				 HorizontalScrollBarVisibility="Auto" VerticalContentAlignment="Center" Height="75px" IsReadOnly="True">
 			<TextBox.Resources>
 				<Style TargetType="{x:Type Border}">
 					<Setter Property="CornerRadius" Value="5"/>
