@@ -224,5 +224,31 @@ namespace Calculator.Tests
             Assert.IsTrue(num0-- == new BigNumber("1"));
             Assert.IsTrue(--num0 == new BigNumber("-1"));
         }
+
+        [TestMethod()]
+        public void MultiplyTest()
+        {
+            string[,] tests =
+            {
+                { "0", "0", "0" },
+                { "-0", "0", "0" },
+                { "0", "1", "0" },
+                { "0", "-1", "0" },
+                { "1", "2", "2" },
+                { "-1", "-2", "2" },
+                { "1", "-2", "-2" },
+                // { "1234567890", "9876543210", "12193263111263526900" },
+                // { "9876543210.0123456789", "1234567890.09876543210", "12193263112254229536.541380888311" }
+            };
+
+            for (int i = 0; i < tests.GetLength(0); i++)
+            {
+                BigNumber n = new BigNumber(tests[i, 0]);
+                BigNumber n1 = new BigNumber(tests[i, 1]);
+                BigNumber res = new BigNumber(tests[i, 2]);
+                BigNumber mul = n * n1;
+                Assert.IsTrue(mul == res);
+            }
+        }
     }
 }

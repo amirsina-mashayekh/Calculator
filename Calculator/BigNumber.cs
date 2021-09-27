@@ -8,6 +8,8 @@ namespace Calculator
     /// </summary>
     public class BigNumber : IEquatable<BigNumber>, IComparable<BigNumber>
     {
+        private static readonly BigNumber zero = new BigNumber("0");
+
         public bool Sign { get; private set; }
 
         private string _integer;
@@ -315,6 +317,27 @@ namespace Calculator
         public static BigNumber operator --(BigNumber n)
         {
             return n - new BigNumber("1");
+        }
+
+        public static BigNumber operator *(BigNumber n, BigNumber n1)
+        {
+            BigNumber result = new BigNumber("0");
+            BigNumber num = n.Abs();
+            BigNumber cnt = n1.Abs();
+
+            if (cnt >= num)
+            {
+                num = n1.Abs();
+                cnt = n.Abs();
+            }
+
+            while (cnt > zero)
+            {
+                result += num;
+                cnt--;
+            }
+
+            return (n.Sign ^ n1.Sign) ? -result : result;
         }
 
         /// <summary>
