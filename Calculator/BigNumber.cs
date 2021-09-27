@@ -280,17 +280,13 @@ namespace Calculator
         public static BigNumber operator +(BigNumber n, BigNumber n1)
         {
             BigNumber rv;
-            bool rs;
+            bool rs = true;
 
-            if (n.Sign != n1.Sign)
+            rv = n.Sign != n1.Sign ? AbsDif(n, n1) : AbsSum(n, n1);
+
+            if ((!n.Sign && -n > n1) || (!n1.Sign && -n1 > n))
             {
-                rv = AbsDif(n, n1);
-                rs = n > n1;
-            }
-            else
-            {
-                rv = AbsSum(n, n1);
-                rs = n.Sign;
+                rs = false;
             }
 
             return rs ? rv : -rv;
@@ -299,20 +295,26 @@ namespace Calculator
         public static BigNumber operator -(BigNumber n, BigNumber n1)
         {
             BigNumber rv;
-            bool rs;
+            bool rs = true;
 
-            if (n.Sign == n1.Sign)
+            rv = n.Sign == n1.Sign ? AbsDif(n, n1) : AbsSum(n, n1);
+
+            if ((!n.Sign && n.Abs() > n1.Abs()) || (n1.Sign && n1.Abs() > n.Abs()))
             {
-                rv = AbsDif(n, n1);
-                rs = n.Sign;
-            }
-            else
-            {
-                rv = AbsSum(n, n1);
-                rs = n > n1;
+                rs = false;
             }
 
             return rs ? rv : -rv;
+        }
+
+        public static BigNumber operator ++(BigNumber n)
+        {
+            return n + new BigNumber("1");
+        }
+
+        public static BigNumber operator --(BigNumber n)
+        {
+            return n - new BigNumber("1");
         }
 
         /// <summary>
