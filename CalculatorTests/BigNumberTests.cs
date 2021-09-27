@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Calculator.Tests
@@ -122,6 +121,33 @@ namespace Calculator.Tests
             BigNumber num1 = num;
             num1.Value = "12";
             Assert.IsTrue(num == num1);
+        }
+
+        [TestMethod()]
+        public void SumTest()
+        {
+            string[,] tests =
+            {
+                { "0", "0", "0" },
+                { "11111111111111111111", "11111111111111111111", "22222222222222222222" },
+                { "1111111111.1111111111", "1111111111.1111111111", "2222222222.2222222222" },
+                { "9999999999.9999999999", "0000000000.0000000001", "10000000000.0000000000" },
+                { "0606060606.0606060606", "0404040404.0404040404", "1010101010.1010101010" },
+                { "-0", "0", "0" },
+                { "-11111111111111111111", "-11111111111111111111", "-22222222222222222222" },
+                { "-1111111111.1111111111", "-1111111111.1111111111", "-2222222222.2222222222" },
+                { "-9999999999.9999999999", "-0000000000.0000000001", "-10000000000.0000000000" },
+                { "-0606060606.0606060606", "-0404040404.0404040404", "-1010101010.1010101010" },
+            };
+
+            for (int i = 0; i < tests.GetLength(0); i++)
+            {
+                BigNumber n = new BigNumber(tests[i, 0]);
+                BigNumber n1 = new BigNumber(tests[i, 1]);
+                BigNumber res = new BigNumber(tests[i, 2]);
+                BigNumber sum = n + n1;
+                Assert.IsTrue(sum == res);
+            }
         }
     }
 }

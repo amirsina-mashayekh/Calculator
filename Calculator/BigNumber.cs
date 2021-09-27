@@ -102,5 +102,72 @@ namespace Calculator
         {
             return !(n == n1);
         }
+
+        public static BigNumber operator +(BigNumber n, BigNumber n1)
+        {
+            if (n.Sign != n1.Sign)
+            {
+                return n.Sign ? n - (-n1) : n1 - (-n);
+            }
+
+            string i0 = n._integer;
+            string d0 = n._decimal;
+            string i1 = n1._integer;
+            string d1 = n1._decimal;
+
+            // Put longer strings in x0
+            if (i0.Length < i1.Length)
+            {
+                string tmp = i0;
+                i0 = i1;
+                i1 = tmp;
+            }
+            if (d0.Length < d1.Length)
+            {
+                string tmp = d0;
+                d0 = d1;
+                d1 = tmp;
+            }
+
+            // Make lenght of numbers equal by adding non-significant 0s
+            while (i1.Length < i0.Length) { i1 = '0' + i1; }
+            while (d1.Length < d0.Length) { d1 += '0'; }
+
+            string rd = "";
+            int carry = 0;
+            for (int i = d0.Length - 1; i >= 0; i--)
+            {
+                int sum = d0[i] - '0' + d1[i] - '0' + carry;
+                if (sum > 9)
+                {
+                    sum -= 10;
+                    carry = 1;
+                }
+                else { carry = 0; }
+                rd = sum.ToString() + rd;
+            }
+
+            string ri = "";
+            for (int i = i0.Length - 1; i >= 0; i--)
+            {
+                int sum = i0[i] - '0' + i1[i] - '0' + carry;
+                if (sum > 9)
+                {
+                    sum -= 10;
+                    carry = 1;
+                }
+                else { carry = 0; }
+                ri = sum.ToString() + ri;
+            }
+
+            if (carry == 1) { ri = '1' + ri; }
+
+            return new BigNumber((n.Sign ? "" : "-") + ri + '.' + rd);
+        }
+
+        public static BigNumber operator -(BigNumber n, BigNumber n1)
+        {
+            return null;
+        }
     }
 }
