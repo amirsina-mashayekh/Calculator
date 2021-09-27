@@ -136,6 +136,8 @@ namespace Calculator
 
         public static BigNumber operator -(BigNumber n)
         {
+            if (n.Value == "0") { return n; }
+
             BigNumber result = (BigNumber)n.MemberwiseClone();
             result.Sign = !result.Sign;
             return result;
@@ -171,13 +173,8 @@ namespace Calculator
             return n.CompareTo(n1) > -1;
         }
 
-        public static BigNumber operator +(BigNumber n, BigNumber n1)
+        private static BigNumber AbsSum(BigNumber n, BigNumber n1)
         {
-            if (n.Sign != n1.Sign)
-            {
-                return n.Sign ? n - (-n1) : n1 - (-n);
-            }
-
             string i0 = n._integer;
             string d0 = n._decimal;
             string i1 = n1._integer;
@@ -218,21 +215,31 @@ namespace Calculator
 
             if (carry == 1) { ri = '1' + ri; }
 
-            return new BigNumber((n.Sign ? "" : "-") + ri + '.' + rd);
+            return new BigNumber(ri + '.' + rd);
         }
 
-        // TODO: Complete it
-        public static BigNumber operator -(BigNumber n, BigNumber n1)
+        private static BigNumber AbsDif(BigNumber n, BigNumber n1)
         {
-            if (!n1.Sign)
-            {
-                return n + (-n1);
-            }
+            string i0;
+            string d0;
+            string i1;
+            string d1;
 
-            string i0 = n._integer;
-            string d0 = n._decimal;
-            string i1 = n1._integer;
-            string d1 = n1._decimal;
+            // Put greater number in x0
+            if (n.Abs() > n1.Abs())
+            {
+                i0 = n._integer;
+                d0 = n._decimal;
+                i1 = n1._integer;
+                d1 = n1._decimal;
+            }
+            else
+            {
+                i0 = n1._integer;
+                d0 = n1._decimal;
+                i1 = n._integer;
+                d1 = n._decimal;
+            }
 
             // Make lenght of numbers equal by adding non-significant 0s
             while (i1.Length < i0.Length) { i1 = '0' + i1; }
@@ -267,7 +274,54 @@ namespace Calculator
                 ri = dif.ToString() + ri;
             }
 
-            return new BigNumber((n.Sign ? "" : "-") + ri + '.' + rd);
+            return new BigNumber(ri + '.' + rd);
+        }
+
+        public static BigNumber operator +(BigNumber n, BigNumber n1)
+        {
+            BigNumber rv;
+            bool rs;
+
+            if (n.Sign != n1.Sign)
+            {
+                rv = AbsDif(n, n1);
+                rs = n > n1;
+            }
+            else
+            {
+                rv = AbsSum(n, n1);
+                rs = n.Sign;
+            }
+
+            return rs ? rv : -rv;
+        }
+
+        public static BigNumber operator -(BigNumber n, BigNumber n1)
+        {
+            BigNumber rv;
+            bool rs;
+
+            if (n.Sign == n1.Sign)
+            {
+                rv = AbsDif(n, n1);
+                rs = n.Sign;
+            }
+            else
+            {
+                rv = AbsSum(n, n1);
+                rs = n > n1;
+            }
+
+            return rs ? rv : -rv;
+        }
+
+        /// <summary>
+        /// Returns the absolute value of this instance of BigNumber.
+        /// </summary>
+        /// <returns>A bigNumber.</returns>
+        public BigNumber Abs()
+        {
+            return Sign ? this : -this;
         }
     }
 }
