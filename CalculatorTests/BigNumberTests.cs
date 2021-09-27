@@ -84,7 +84,7 @@ namespace Calculator.Tests
         }
 
         [TestMethod()]
-        public void EqualNotEqualTest()
+        public void Equal_NotEqualTest()
         {
             string[,] eq =
             {
@@ -95,20 +95,26 @@ namespace Calculator.Tests
                 { "1", "1.000000"},
                 { "0", "-0.0000000000"}
             };
-            string[,] neq =
-            {
-                { "1234", "012340"},
-                { "012340", "-12340"}
-            };
-
             for (int i = 0; i < eq.GetLength(0); i++)
             {
                 BigNumber n = new BigNumber(eq[i, 0]);
                 BigNumber n1 = new BigNumber(eq[i, 1]);
                 Assert.IsTrue(n == n1);
                 Assert.IsTrue(n.GetHashCode() == n1.GetHashCode());
+                Assert.IsTrue(n >= n1);
+                Assert.IsTrue(n <= n1);
             }
 
+            BigNumber num = new BigNumber("123");
+            BigNumber num1 = num;
+            num1.Value = "12";
+            Assert.IsTrue(num == num1);
+
+            string[,] neq =
+            {
+                { "1234", "012340"},
+                { "012340", "-12340"}
+            };
             for (int i = 0; i < neq.GetLength(0); i++)
             {
                 BigNumber n = new BigNumber(neq[i, 0]);
@@ -116,11 +122,33 @@ namespace Calculator.Tests
                 Assert.IsFalse(n == n1);
                 Assert.IsFalse(n.GetHashCode() == n1.GetHashCode());
             }
+        }
 
-            BigNumber num = new BigNumber("123");
-            BigNumber num1 = num;
-            num1.Value = "12";
-            Assert.IsTrue(num == num1);
+        [TestMethod()]
+        public void CompareTest()
+        {
+            string[,] t1 =
+            {
+                { "12340", "012341"},
+                { "-012340", "-12341"},
+                { "-012341", "12340"},
+                { "1.0000001", "1.0021"},
+                { "-1.0021", "-1.0000001"},
+                { "-1.0021", "1.0000001"}
+            };
+            for (int i = 0; i < t1.GetLength(0); i++)
+            {
+                BigNumber n = new BigNumber(t1[i, 0]);
+                BigNumber n1 = new BigNumber(t1[i, 1]);
+                Assert.IsTrue(n < n1);
+                Assert.IsFalse(n > n1);
+                Assert.IsTrue(n <= n1);
+                Assert.IsFalse(n >= n1);
+                Assert.IsTrue(n1 > n);
+                Assert.IsFalse(n1 < n);
+                Assert.IsTrue(n1 >= n);
+                Assert.IsFalse(n1 <= n);
+            }
         }
 
         [TestMethod()]
@@ -131,7 +159,7 @@ namespace Calculator.Tests
                 { "0", "0", "0" },
                 { "11111111111111111111", "11111111111111111111", "22222222222222222222" },
                 { "1111111111.1111111111", "1111111111.1111111111", "2222222222.2222222222" },
-                { "9999999999.9999999999", "0000000000.0000000001", "10000000000.0000000000" },
+                { "9999999999.0000000001", "0000000000.9999999999", "10000000000.0000000000" },
                 { "0606060606.0606060606", "0404040404.0404040404", "1010101010.1010101010" },
                 { "-0", "0", "0" },
                 { "-11111111111111111111", "-11111111111111111111", "-22222222222222222222" },

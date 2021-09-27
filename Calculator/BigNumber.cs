@@ -6,7 +6,7 @@ namespace Calculator
     /// <summary>
     /// Save and arithmetics for big numbers.
     /// </summary>
-    public class BigNumber : IEquatable<BigNumber>
+    public class BigNumber : IEquatable<BigNumber>, IComparable<BigNumber>
     {
         public bool Sign { get; private set; }
 
@@ -66,6 +66,54 @@ namespace Calculator
             return Value;
         }
 
+        /// <summary>
+        /// Compares this instance to a specified BigNumber and returns an indication of their relative values.
+        /// </summary>
+        /// <param name="other">A BigNumber to compare.</param>
+        /// <returns>
+        /// A signed number indicating the relative values of this instance and <c>n</c>. Returns
+        /// -1 if this instance is less than <c>n</c>, 0 if this instance is equal to <c>n</c> and
+        /// 1 if this instance is greater than <c>n</c>.
+        /// </returns>
+        public int CompareTo(BigNumber other)
+        {
+            if (Sign != other.Sign)
+            {
+                return Sign ? 1 : -1;
+            }
+
+            int result = 0;
+            string i0 = _integer;
+            string d0 = _decimal;
+            string i1 = other._integer;
+            string d1 = other._decimal;
+
+            // Make lenght of numbers equal by adding non-significant 0s
+            while (i1.Length < i0.Length) { i1 = '0' + i1; }
+            while (i0.Length < i1.Length) { i0 = '0' + i0; }
+            while (d1.Length < d0.Length) { d1 += '0'; }
+            while (d0.Length < d1.Length) { d0 += '0'; }
+
+            for (int i = 0; i < i0.Length; i++)
+            {
+                // No need to cast
+                if (i0[i] > i1[i]) { result = 1; }
+                else if (i0[i] < i1[i]) { result = -1; }
+                if (result != 0) { break; }
+            }
+            if (result != 0) { return result; }
+
+            for (int i = 0; i < d0.Length; i++)
+            {
+                // No need to cast
+                if (d0[i] > d1[i]) { result = 1; }
+                else if (d0[i] < d1[i]) { result = -1; }
+                if (result != 0) { break; }
+            }
+
+            return Sign ? result : -result;
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as BigNumber);
@@ -73,7 +121,7 @@ namespace Calculator
 
         public bool Equals(BigNumber other)
         {
-            return !(other is null) && (ReferenceEquals(this, other) || Value == other.Value);
+            return !(other is null) && (ReferenceEquals(this, other) || CompareTo(other) == 0);
         }
 
         public override int GetHashCode()
@@ -103,6 +151,26 @@ namespace Calculator
             return !(n == n1);
         }
 
+        public static bool operator <(BigNumber n, BigNumber n1)
+        {
+            return n.CompareTo(n1) == -1;
+        }
+
+        public static bool operator >(BigNumber n, BigNumber n1)
+        {
+            return n.CompareTo(n1) == 1;
+        }
+
+        public static bool operator <=(BigNumber n, BigNumber n1)
+        {
+            return n.CompareTo(n1) < 1;
+        }
+
+        public static bool operator >=(BigNumber n, BigNumber n1)
+        {
+            return n.CompareTo(n1) > -1;
+        }
+
         public static BigNumber operator +(BigNumber n, BigNumber n1)
         {
             if (n.Sign != n1.Sign)
@@ -115,23 +183,11 @@ namespace Calculator
             string i1 = n1._integer;
             string d1 = n1._decimal;
 
-            // Put longer strings in x0
-            if (i0.Length < i1.Length)
-            {
-                string tmp = i0;
-                i0 = i1;
-                i1 = tmp;
-            }
-            if (d0.Length < d1.Length)
-            {
-                string tmp = d0;
-                d0 = d1;
-                d1 = tmp;
-            }
-
             // Make lenght of numbers equal by adding non-significant 0s
             while (i1.Length < i0.Length) { i1 = '0' + i1; }
+            while (i0.Length < i1.Length) { i0 = '0' + i0; }
             while (d1.Length < d0.Length) { d1 += '0'; }
+            while (d0.Length < d1.Length) { d0 += '0'; }
 
             string rd = "";
             int carry = 0;
@@ -165,9 +221,53 @@ namespace Calculator
             return new BigNumber((n.Sign ? "" : "-") + ri + '.' + rd);
         }
 
+        // TODO: Complete it
         public static BigNumber operator -(BigNumber n, BigNumber n1)
         {
-            return null;
+            if (!n1.Sign)
+            {
+                return n + (-n1);
+            }
+
+            string i0 = n._integer;
+            string d0 = n._decimal;
+            string i1 = n1._integer;
+            string d1 = n1._decimal;
+
+            // Make lenght of numbers equal by adding non-significant 0s
+            while (i1.Length < i0.Length) { i1 = '0' + i1; }
+            while (i0.Length < i1.Length) { i0 = '0' + i0; }
+            while (d1.Length < d0.Length) { d1 += '0'; }
+            while (d0.Length < d1.Length) { d0 += '0'; }
+
+            string rd = "";
+            int carry = 0;
+            for (int i = d0.Length - 1; i >= 0; i--)
+            {
+                int dif = d0[i] - '0' - (d1[i] - '0') - carry;
+                if (dif < 0)
+                {
+                    dif += 10;
+                    carry = 1;
+                }
+                else { carry = 0; }
+                rd = dif.ToString() + rd;
+            }
+
+            string ri = "";
+            for (int i = i0.Length - 1; i >= 0; i--)
+            {
+                int dif = i0[i] - '0' - (i1[i] - '0') - carry;
+                if (dif < 0)
+                {
+                    dif += 10;
+                    carry = 1;
+                }
+                else { carry = 0; }
+                ri = dif.ToString() + ri;
+            }
+
+            return new BigNumber((n.Sign ? "" : "-") + ri + '.' + rd);
         }
     }
 }
