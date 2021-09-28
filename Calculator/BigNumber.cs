@@ -10,6 +10,8 @@ namespace Calculator
     {
         private static readonly BigNumber zero = new BigNumber("0");
 
+        private static readonly BigNumber ten = new BigNumber("10");
+
         private bool _sign;
 
         private string _integer;
@@ -69,9 +71,9 @@ namespace Calculator
         }
 
         /// <summary>
-        /// Compares this instance to a specified BigNumber and returns an indication of their relative values.
+        /// Compares this instance to a specified <c>BigNumber</c> and returns an indication of their relative values.
         /// </summary>
-        /// <param name="other">A BigNumber to compare.</param>
+        /// <param name="other">A <c>BigNumber</c> to compare.</param>
         /// <returns>
         /// A signed number indicating the relative values of this instance and <c>n</c>. Returns
         /// -1 if this instance is less than <c>n</c>, 0 if this instance is equal to <c>n</c> and
@@ -140,7 +142,7 @@ namespace Calculator
         {
             if (n.Value == "0") { return n; }
 
-            BigNumber result = (BigNumber)n.MemberwiseClone();
+            BigNumber result = n.MemberwiseClone() as BigNumber;
             result._sign = !result._sign;
             return result;
         }
@@ -175,6 +177,137 @@ namespace Calculator
             return n.CompareTo(n1) > -1;
         }
 
+        public static BigNumber operator +(BigNumber n, BigNumber n1)
+        {
+            BigNumber rv;
+            bool rs = true;
+
+            rv = n._sign != n1._sign ? AbsDif(n, n1) : AbsSum(n, n1);
+
+            if ((!n._sign && -n > n1) || (!n1._sign && -n1 > n))
+            {
+                rs = false;
+            }
+
+            return rs ? rv : -rv;
+        }
+
+        public static BigNumber operator -(BigNumber n, BigNumber n1)
+        {
+            BigNumber rv;
+            bool rs = true;
+
+            rv = n._sign == n1._sign ? AbsDif(n, n1) : AbsSum(n, n1);
+
+            if ((!n._sign && n.Abs() > n1.Abs()) || (n1._sign && n1.Abs() > n.Abs()))
+            {
+                rs = false;
+            }
+
+            return rs ? rv : -rv;
+        }
+
+        public static BigNumber operator ++(BigNumber n)
+        {
+            return n + new BigNumber("1");
+        }
+
+        public static BigNumber operator --(BigNumber n)
+        {
+            return n - new BigNumber("1");
+        }
+
+        public static BigNumber operator *(BigNumber n, BigNumber n1)
+        {
+            BigNumber result = zero.MemberwiseClone() as BigNumber;
+            BigNumber nAbs = n.Abs();
+            BigNumber n1Abs = n1.Abs();
+            string lev;
+            string gtv;
+
+            // Put number with smaller absolute value in lev
+            if (nAbs > n1Abs)
+            {
+                lev = n1Abs.Value.Replace(".", "");
+                gtv = nAbs.Value.Replace(".", "");
+            }
+            else
+            {
+                lev = nAbs.Value.Replace(".", "");
+                gtv = n1Abs.Value.Replace(".", "");
+            }
+
+            int llen = lev.Length;
+            int glen = gtv.Length;
+            int carry = 0;
+            for (int i = llen - 1; i >= 0; i--)
+            {
+                if (lev[i] == '0') { continue; }
+
+                string mul = "";
+                for (int j = 0; j < llen - 1 - i; j++) { mul += '0'; }
+
+                for (int j = glen - 1; j >= 0; j--)
+                {
+                    int m = ((gtv[j] - '0') * (lev[i] - '0')) + carry;
+                    if (m > 9)
+                    {
+                        carry = m / 10;
+                        m %= 10;
+                    }
+                    else { carry = 0; }
+
+                    mul = m.ToString() + mul;
+                }
+                if (carry > 0)
+                {
+                    mul = carry.ToString() + mul;
+                    carry = 0;
+                }
+
+                result += new BigNumber(mul);
+            }
+
+            int decimalPoints = nAbs._decimal.Length + n1Abs._decimal.Length;
+            while (decimalPoints >= result._integer.Length)
+            {
+                // Add 0s before number to be able to insert decimal point
+                result._integer = '0' + result._integer;
+            }
+            result = new BigNumber(result._integer.Insert(result._integer.Length - decimalPoints, "."));
+            return (n._sign ^ n1._sign) ? -result : result;
+        }
+
+        public static BigNumber operator /(BigNumber n, BigNumber n1)
+        {
+            return DivideAndRemainder(n, n1, out _);
+        }
+
+        public static BigNumber operator %(BigNumber n, BigNumber n1)
+        {
+            if (n._decimal != "" || n1._decimal != "")
+            {
+                throw new ArithmeticException("Modulus division is only available for integers.");
+            }
+            _ = DivideAndRemainder(n, n1, out BigNumber result);
+            return result;
+        }
+
+        /// <summary>
+        /// Returns the absolute value of this instance of BigNumber.
+        /// </summary>
+        /// <returns>A bigNumber.</returns>
+        public BigNumber Abs()
+        {
+            return _sign ? this : -this;
+        }
+
+        /// <summary>
+        /// Calculates the sum of absolute values of two <c>BigNumber</c>s.
+        /// </summary>
+        /// <param name="n">A <c>BigNumber</c>.</param>
+        /// <param name="n1">Another <c>BigNumber</c>.</param>
+        /// <returns>Sum of absolute values of <c>n</c> and <c>n1</c>.</returns>
         private static BigNumber AbsSum(BigNumber n, BigNumber n1)
         {
             string i0 = n._integer;
@@ -222,6 +355,12 @@ namespace Calculator
             return new BigNumber(ri + '.' + rd);
         }
 
+        /// <summary>
+        /// Calculates the differece of absolute values of two <c>BigNumber</c>s.
+        /// </summary>
+        /// <param name="n">A <c>BigNumber</c>.</param>
+        /// <param name="n1">Another <c>BigNumber</c>.</param>
+        /// <returns>Difference of absolute values of <c>n</c> and <c>n1</c>.</returns>
         private static BigNumber AbsDif(BigNumber n, BigNumber n1)
         {
             string i0;
@@ -281,109 +420,61 @@ namespace Calculator
             return new BigNumber(ri + '.' + rd);
         }
 
-        public static BigNumber operator +(BigNumber n, BigNumber n1)
-        {
-            BigNumber rv;
-            bool rs = true;
-
-            rv = n._sign != n1._sign ? AbsDif(n, n1) : AbsSum(n, n1);
-
-            if ((!n._sign && -n > n1) || (!n1._sign && -n1 > n))
-            {
-                rs = false;
-            }
-
-            return rs ? rv : -rv;
-        }
-
-        public static BigNumber operator -(BigNumber n, BigNumber n1)
-        {
-            BigNumber rv;
-            bool rs = true;
-
-            rv = n._sign == n1._sign ? AbsDif(n, n1) : AbsSum(n, n1);
-
-            if ((!n._sign && n.Abs() > n1.Abs()) || (n1._sign && n1.Abs() > n.Abs()))
-            {
-                rs = false;
-            }
-
-            return rs ? rv : -rv;
-        }
-
-        public static BigNumber operator ++(BigNumber n)
-        {
-            return n + new BigNumber("1");
-        }
-
-        public static BigNumber operator --(BigNumber n)
-        {
-            return n - new BigNumber("1");
-        }
-
-        public static BigNumber operator *(BigNumber n, BigNumber n1)
-        {
-            BigNumber result = new BigNumber("0");
-            BigNumber nAbs = n.Abs();
-            BigNumber n1Abs = n1.Abs();
-            string lev;
-            string gtv;
-
-            // Put number with smaller absolute value in lev
-            if (nAbs > n1Abs)
-            {
-                lev = n1Abs.Value.Replace(".", "");
-                gtv = nAbs.Value.Replace(".", "");
-            }
-            else
-            {
-                lev = nAbs.Value.Replace(".", "");
-                gtv = n1Abs.Value.Replace(".", "");
-            }
-
-            int llen = lev.Length;
-            int glen = gtv.Length;
-            int carry = 0;
-            for (int i = llen - 1; i >= 0; i--)
-            {
-                if (lev[i] == '0') { continue; }
-
-                string mul = "";
-                for (int j = 0; j < llen - 1 - i; j++) { mul += '0'; }
-
-                for (int j = glen - 1; j >= 0; j--)
-                {
-                    int m = ((gtv[j] - '0') * (lev[i] - '0')) + carry;
-                    if (m > 9)
-                    {
-                        carry = m / 10;
-                        m %= 10;
-                    }
-                    else { carry = 0; }
-
-                    mul = m.ToString() + mul;
-                }
-                if (carry > 0)
-                {
-                    mul = carry.ToString() + mul;
-                    carry = 0;
-                }
-
-                result += new BigNumber(mul);
-            }
-
-            int pointIndex = nAbs._decimal.Length + n1Abs._decimal.Length;
-            result = new BigNumber(result.Value.Insert(result.Value.Length - pointIndex, "."));
-            return (n._sign ^ n1._sign) ? -result : result;
-        }
-
         /// <summary>
-        /// Returns the absolute value of this instance of BigNumber.
+        /// Calculates the quotient and remainder of division of two <c>BigNumber</c>s.
         /// </summary>
-        /// <returns>A bigNumber.</returns>
-        public BigNumber Abs()
+        /// <param name="n">A <c>BigNumber</c>.</param>
+        /// <param name="n1">Another <c>BigNumber</c>.</param>
+        /// <param name="remainder">A <c>BigNumber</c> to put remainder of <c>n/n1</c> in it.</param>
+        /// <returns>Quotient of <c>n/n1</c>.</returns>
+        private static BigNumber DivideAndRemainder(BigNumber n, BigNumber n1, out BigNumber remainder)
         {
-            return _sign ? this : -this;
+            if (n1 == zero) { throw new ArithmeticException("Can't divide by zero."); }
+
+            BigNumber divisioned = (n.MemberwiseClone() as BigNumber).Abs();
+            BigNumber divisor = (n1.MemberwiseClone() as BigNumber).Abs();
+
+            // Get rid of decimals
+            while (divisor._decimal.Length > 0 || divisioned._decimal.Length > 0)
+            {
+                divisioned *= ten;
+                divisor *= ten;
+            }
+
+            string ri = "";
+            int divLen = divisor._integer.Length;
+            BigNumber rem = zero.MemberwiseClone() as BigNumber;
+            while (divisioned._integer.Length > 0 || divisioned > divisor)
+            {
+                BigNumber tempDiv = new BigNumber(rem._integer + divisioned._integer[0]);
+
+                BigNumber tmp = new BigNumber("9");
+                BigNumber mul;
+
+                int i = 9;
+                do
+                {
+                    mul = divisor * tmp;
+                    if (mul <= tempDiv) { break; }
+                    i--;
+                    tmp._integer = i.ToString();
+                } while (true);
+
+                ri += i.ToString();
+
+                rem = tempDiv - mul;
+                divisioned._integer = divisioned._integer[1..];
+            }
+
+            bool sign = n._sign ^ n1._sign;
+            if (n._decimal == "" || n1._decimal == "")
+            {
+                if (sign) { rem = divisor - rem; }
+                remainder = n1._sign ? rem : -rem;
+            }
+            else { remainder = null; }
+
+            return new BigNumber((sign ? "-" : "") + ri);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Calculator.Tests
     [TestClass()]
     public class BigNumberTests
     {
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void ValidationTest()
         {
             string[] ok =
@@ -63,7 +63,7 @@ namespace Calculator.Tests
             }
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void NegationTest()
         {
             string[,] tests =
@@ -79,11 +79,12 @@ namespace Calculator.Tests
             for (int i = 0; i < tests.GetLength(0); i++)
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
+                Debug.Print("n: " + n + "  ==  -:" + tests[i, 1]);
                 Assert.AreEqual((-n).Value, tests[i, 1]);
             }
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void Equal_NotEqualTest()
         {
             string[,] eq =
@@ -99,6 +100,7 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(eq[i, 0]);
                 BigNumber n1 = new BigNumber(eq[i, 1]);
+                Debug.Print("n: " + n + "  ==  n1:" + n1);
                 Assert.IsTrue(n == n1);
                 Assert.IsTrue(n.GetHashCode() == n1.GetHashCode());
                 Assert.IsTrue(n >= n1);
@@ -119,12 +121,14 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(neq[i, 0]);
                 BigNumber n1 = new BigNumber(neq[i, 1]);
+                Debug.Print("n: " + n + "  !=  n1:" + n1);
+                Assert.IsTrue(n != n1);
                 Assert.IsFalse(n == n1);
                 Assert.IsFalse(n.GetHashCode() == n1.GetHashCode());
             }
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void CompareTest()
         {
             string[,] t1 =
@@ -142,6 +146,7 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(t1[i, 0]);
                 BigNumber n1 = new BigNumber(t1[i, 1]);
+                Debug.Print("n: " + n + "  <  n1:" + n1);
                 Assert.IsTrue(n < n1);
                 Assert.IsFalse(n > n1);
                 Assert.IsTrue(n <= n1);
@@ -153,7 +158,7 @@ namespace Calculator.Tests
             }
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void AdditionTest()
         {
             string[,] tests =
@@ -180,6 +185,7 @@ namespace Calculator.Tests
                 BigNumber n1 = new BigNumber(tests[i, 1]);
                 BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber sum = n + n1;
+                Debug.Print("res: " + res + "    sum:" + sum);
                 Assert.IsTrue(sum == res);
             }
 
@@ -189,7 +195,7 @@ namespace Calculator.Tests
             Assert.IsTrue(++num0 == new BigNumber("1"));
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void SubtractionTest()
         {
             string[,] tests =
@@ -215,8 +221,9 @@ namespace Calculator.Tests
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
                 BigNumber res = new BigNumber(tests[i, 2]);
-                BigNumber sum = n - n1;
-                Assert.IsTrue(sum == res);
+                BigNumber dif = n - n1;
+                Debug.Print("res: " + res + "    dif:" + dif);
+                Assert.IsTrue(dif == res);
             }
 
             BigNumber num0 = new BigNumber("2");
@@ -225,7 +232,7 @@ namespace Calculator.Tests
             Assert.IsTrue(--num0 == new BigNumber("-1"));
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void MultiplicationTest()
         {
             string[,] tests =
@@ -237,6 +244,7 @@ namespace Calculator.Tests
                 { "1", "2", "2" },
                 { "-1", "-2", "2" },
                 { "1", "-2", "-2" },
+                { "0.0001", "10", "0.001" },
                 { "1234567890", "000090087650", "111219319975558500" },
                 { "9870654.30210", "-012034.560789", "-118788989225.8268203569" }
             };
@@ -247,8 +255,61 @@ namespace Calculator.Tests
                 BigNumber n1 = new BigNumber(tests[i, 1]);
                 BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber mul = n * n1;
+                Debug.Print("res: " + res + "    mul:" + mul);
                 Assert.IsTrue(mul == res);
             }
+        }
+
+        [TestMethod(), Timeout(100)]
+        public void DivisionTest()
+        {
+            string[,] tests =
+            {
+                { "4", "2", "2" },
+                { "1000", "500", "2" },
+                { "1024", "16", "64" },
+                { "1000000000000000000000000000000", "10", "100000000000000000000000000000" },
+                { "10.24", "0.000000000064", "160000000000" }
+            };
+
+            for (int i = 0; i < tests.GetLength(0); i++)
+            {
+                BigNumber n = new BigNumber(tests[i, 0]);
+                BigNumber n1 = new BigNumber(tests[i, 1]);
+                BigNumber res = new BigNumber(tests[i, 2]);
+                BigNumber div = n / n1;
+                Debug.Print("res: " + res + "    div:" + div);
+                Assert.IsTrue(div == res);
+            }
+
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1") / new BigNumber("0"));
+        }
+
+        [TestMethod(), Timeout(100)]
+        public void ModulusTest()
+        {
+            string[,] tests =
+            {
+                { "25", "6", "1" },
+                { "25", "-6", "-5" },
+                { "-25", "6", "5" },
+                { "-25", "-6", "-1" }
+            };
+
+            for (int i = 0; i < tests.GetLength(0); i++)
+            {
+                BigNumber n = new BigNumber(tests[i, 0]);
+                BigNumber n1 = new BigNumber(tests[i, 1]);
+                BigNumber res = new BigNumber(tests[i, 2]);
+                BigNumber mod = n % n1;
+                Debug.Print("res: " + res + "    mod:" + mod);
+                Assert.IsTrue(mod == res);
+            }
+
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1") % new BigNumber("0"));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1.1") % new BigNumber("1"));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1") % new BigNumber("1.1"));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1.1") % new BigNumber("1.1"));
         }
     }
 }
