@@ -100,8 +100,35 @@ namespace Calculator
         private void Backspace_Click(object sender, RoutedEventArgs e)
         {
             int caretIndex = inputBox.CaretIndex;
+
+            if (caretIndex == 0)
+            {
+                ResetInputBox();
+                return;
+            }
+
             inputBox.Text = inputBox.Text.Remove(caretIndex - 1, 1);
             inputBox.CaretIndex = caretIndex - 1;
+        }
+
+        private void MemoryClear_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MemoryStore_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Memory_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonsGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            inputBox.Focus();
         }
     }
 }

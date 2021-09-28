@@ -28,8 +28,9 @@
             </TextBox.Resources>
         </TextBox>
 
-        <Grid Grid.Row="2">
+        <Grid x:Name="buttonsGrid" Grid.Row="2" KeyDown="ButtonsGrid_KeyDown">
             <Grid.RowDefinitions>
+                <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
@@ -45,36 +46,41 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="backspace" Content="&#x232B;" Grid.Row="0" Grid.Column="4" Click="Backspace_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="memory" Content="M" Grid.Row="0" Grid.Column="0" Click="Memory_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="memoryStore" Content="MS" Grid.Row="0" Grid.Column="1" Click="MemoryStore_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="memoryClear" Content="MC" Grid.Row="0" Grid.Column="2" Click="MemoryClear_Click" />
             <Button Style="{DynamicResource GeneralButtons}" x:Name="clear" Content="C" Grid.Row="0" Grid.Column="3" Click="Clear_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="zero"  Content="0" Grid.Row="5" Grid.Column="2" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="one"   Content="1" Grid.Row="4" Grid.Column="1" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="two"   Content="2" Grid.Row="4" Grid.Column="2" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="three" Content="3" Grid.Row="4" Grid.Column="3" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="four"  Content="4" Grid.Row="3" Grid.Column="1" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="five"  Content="5" Grid.Row="3" Grid.Column="2" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="six"   Content="6" Grid.Row="3" Grid.Column="3" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="seven" Content="7" Grid.Row="2" Grid.Column="1" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="eight" Content="8" Grid.Row="2" Grid.Column="2" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="nine"  Content="9" Grid.Row="2" Grid.Column="3" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource NumberButtons}" x:Name="point" Content="." Grid.Row="5" Grid.Column="1" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="plus" Content="+" Grid.Row="5" Grid.Column="4" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="minus" Content="-" Grid.Row="4" Grid.Column="4" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="multiply" Content="&#x00D7;" Grid.Row="3" Grid.Column="4" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="divide" Content="/" Grid.Row="2" Grid.Column="4" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="modulo" Content="mod" Grid.Row="1" Grid.Column="4" Click="FunctionButtons_Click" />
-            <Button Style="{DynamicResource EqualsButton}" x:Name="equals" Content="=" Grid.Row="5" Grid.Column="3" Click="Equals_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="leftParenthesis" Content="(" Grid.Row="0" Grid.Column="2" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="rightParenthesis" Content=")" Grid.Row="1" Grid.Column="2" Click="SelfInsert_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="integral" Content="&#x222B;" Grid.Row="1" Grid.Column="3" Click="Integral_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="power" Content="x&#x02B8;" Grid.Row="3" Grid.Column="0" Click="Power_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="factorial" Content="x!" Grid.Row="4" Grid.Column="0" Click="Factorial_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="absolute" Content="|x|" Grid.Row="5" Grid.Column="0" Click="Absolute_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="sin" Content="sin" Grid.Row="0" Grid.Column="0" Click="FunctionButtons_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="cos" Content="cos" Grid.Row="0" Grid.Column="1" Click="FunctionButtons_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="tan" Content="tan" Grid.Row="1" Grid.Column="0" Click="FunctionButtons_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="cot" Content="cot" Grid.Row="1" Grid.Column="1" Click="FunctionButtons_Click" />
-            <Button Style="{DynamicResource GeneralButtons}" x:Name="pi" Content="&#x03C0;" Grid.Row="2" Grid.Column="0" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="backspace" Content="&#x232B;" Grid.Row="0" Grid.Column="4" Click="Backspace_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="zero"  Content="0" Grid.Row="6" Grid.Column="2" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="one"   Content="1" Grid.Row="5" Grid.Column="1" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="two"   Content="2" Grid.Row="5" Grid.Column="2" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="three" Content="3" Grid.Row="5" Grid.Column="3" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="four"  Content="4" Grid.Row="4" Grid.Column="1" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="five"  Content="5" Grid.Row="4" Grid.Column="2" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="six"   Content="6" Grid.Row="4" Grid.Column="3" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="seven" Content="7" Grid.Row="3" Grid.Column="1" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="eight" Content="8" Grid.Row="3" Grid.Column="2" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="nine"  Content="9" Grid.Row="3" Grid.Column="3" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource NumberButtons}" x:Name="point" Content="." Grid.Row="6" Grid.Column="1" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="plus" Content="+" Grid.Row="6" Grid.Column="4" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="minus" Content="&#x2212;" Grid.Row="5" Grid.Column="4" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="multiply" Content="&#x00D7;" Grid.Row="4" Grid.Column="4" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="divide" Content="/" Grid.Row="3" Grid.Column="4" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="modulo" Content="mod" Grid.Row="2" Grid.Column="4" Click="FunctionButtons_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="percent" Content="%" Grid.Row="2" Grid.Column="3" Click="FunctionButtons_Click" />
+            <Button Style="{DynamicResource EqualsButton}" x:Name="equals" Content="=" Grid.Row="6" Grid.Column="3" Click="Equals_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="leftParenthesis" Content="(" Grid.Row="1" Grid.Column="2" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="rightParenthesis" Content=")" Grid.Row="1" Grid.Column="3" Click="SelfInsert_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="xLetter" Content="x" Grid.Row="1" Grid.Column="4" Click="SelfInsert_Click" FontFamily="Times New Roman" FontStyle="Italic" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="integral" Content="&#x222B;" Grid.Row="2" Grid.Column="2" Click="Integral_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="power" Content="x&#x02B8;" Grid.Row="4" Grid.Column="0" Click="Power_Click" FontFamily="Times New Roman" FontStyle="Italic" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="factorial" Content="x!" Grid.Row="5" Grid.Column="0" Click="Factorial_Click" FontFamily="Times New Roman" FontStyle="Italic" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="absolute" Content="|x|" Grid.Row="6" Grid.Column="0" Click="Absolute_Click" FontFamily="Times New Roman" FontStyle="Italic" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="sin" Content="sin" Grid.Row="1" Grid.Column="0" Click="FunctionButtons_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="cos" Content="cos" Grid.Row="1" Grid.Column="1" Click="FunctionButtons_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="tan" Content="tan" Grid.Row="2" Grid.Column="0" Click="FunctionButtons_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="cot" Content="cot" Grid.Row="2" Grid.Column="1" Click="FunctionButtons_Click" />
+            <Button Style="{DynamicResource GeneralButtons}" x:Name="pi" Content="&#x03C0;" Grid.Row="3" Grid.Column="0" Click="SelfInsert_Click" FontFamily="Times New Roman" />
         </Grid>
     </Grid>
 </Window>
