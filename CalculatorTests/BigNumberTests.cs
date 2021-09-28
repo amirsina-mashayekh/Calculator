@@ -154,7 +154,7 @@ namespace Calculator.Tests
         }
 
         [TestMethod()]
-        public void SumTest()
+        public void AdditionTest()
         {
             string[,] tests =
             {
@@ -190,7 +190,7 @@ namespace Calculator.Tests
         }
 
         [TestMethod()]
-        public void MinusTest()
+        public void SubtractionTest()
         {
             string[,] tests =
             {
@@ -226,7 +226,7 @@ namespace Calculator.Tests
         }
 
         [TestMethod()]
-        public void MultiplyTest()
+        public void MultiplicationTest()
         {
             string[,] tests =
             {
@@ -237,8 +237,8 @@ namespace Calculator.Tests
                 { "1", "2", "2" },
                 { "-1", "-2", "2" },
                 { "1", "-2", "-2" },
-                // { "1234567890", "9876543210", "12193263111263526900" },
-                // { "9876543210.0123456789", "1234567890.09876543210", "12193263112254229536.541380888311" }
+                { "1234567890", "000090087650", "111219319975558500" },
+                { "9870654.30210", "-012034.560789", "-118788989225.8268203569" }
             };
 
             for (int i = 0; i < tests.GetLength(0); i++)

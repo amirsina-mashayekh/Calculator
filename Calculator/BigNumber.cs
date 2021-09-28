@@ -10,7 +10,7 @@ namespace Calculator
     {
         private static readonly BigNumber zero = new BigNumber("0");
 
-        public bool Sign { get; private set; }
+        private bool _sign;
 
         private string _integer;
 
@@ -22,7 +22,7 @@ namespace Calculator
             {
                 string val = "";
 
-                if (!Sign) { val += '-'; }
+                if (!_sign) { val += '-'; }
                 val += _integer;
                 if (_decimal != "") { val += '.' + _decimal; }
 
@@ -35,17 +35,17 @@ namespace Calculator
                     throw new FormatException("String is not a rational number.");
                 }
 
-                Sign = value[0] != '-';
+                _sign = value[0] != '-';
 
                 int pointIndex = value.IndexOf('.');
                 if (pointIndex > -1)
                 {
-                    _integer = value[(Sign ? 0 : 1)..pointIndex];
+                    _integer = value[(_sign ? 0 : 1)..pointIndex];
                     _decimal = value[(pointIndex + 1)..];
                 }
                 else
                 {
-                    _integer = value[(Sign ? 0 : 1)..];
+                    _integer = value[(_sign ? 0 : 1)..];
                     _decimal = "";
                 }
 
@@ -54,7 +54,7 @@ namespace Calculator
 
                 _decimal = _decimal.TrimEnd('0');
 
-                if (_integer == "0" && _decimal == "") { Sign = true; }
+                if (_integer == "0" && _decimal == "") { _sign = true; }
             }
         }
 
@@ -79,9 +79,9 @@ namespace Calculator
         /// </returns>
         public int CompareTo(BigNumber other)
         {
-            if (Sign != other.Sign)
+            if (_sign != other._sign)
             {
-                return Sign ? 1 : -1;
+                return _sign ? 1 : -1;
             }
 
             int result = 0;
@@ -113,7 +113,7 @@ namespace Calculator
                 if (result != 0) { break; }
             }
 
-            return Sign ? result : -result;
+            return _sign ? result : -result;
         }
 
         public override bool Equals(object obj)
@@ -141,7 +141,7 @@ namespace Calculator
             if (n.Value == "0") { return n; }
 
             BigNumber result = (BigNumber)n.MemberwiseClone();
-            result.Sign = !result.Sign;
+            result._sign = !result._sign;
             return result;
         }
 
@@ -190,7 +190,8 @@ namespace Calculator
 
             string rd = "";
             int carry = 0;
-            for (int i = d0.Length - 1; i >= 0; i--)
+            int dlen = d0.Length;
+            for (int i = dlen - 1; i >= 0; i--)
             {
                 int sum = d0[i] - '0' + d1[i] - '0' + carry;
                 if (sum > 9)
@@ -203,7 +204,8 @@ namespace Calculator
             }
 
             string ri = "";
-            for (int i = i0.Length - 1; i >= 0; i--)
+            int ilen = i0.Length;
+            for (int i = ilen - 1; i >= 0; i--)
             {
                 int sum = i0[i] - '0' + i1[i] - '0' + carry;
                 if (sum > 9)
@@ -284,9 +286,9 @@ namespace Calculator
             BigNumber rv;
             bool rs = true;
 
-            rv = n.Sign != n1.Sign ? AbsDif(n, n1) : AbsSum(n, n1);
+            rv = n._sign != n1._sign ? AbsDif(n, n1) : AbsSum(n, n1);
 
-            if ((!n.Sign && -n > n1) || (!n1.Sign && -n1 > n))
+            if ((!n._sign && -n > n1) || (!n1._sign && -n1 > n))
             {
                 rs = false;
             }
@@ -299,9 +301,9 @@ namespace Calculator
             BigNumber rv;
             bool rs = true;
 
-            rv = n.Sign == n1.Sign ? AbsDif(n, n1) : AbsSum(n, n1);
+            rv = n._sign == n1._sign ? AbsDif(n, n1) : AbsSum(n, n1);
 
-            if ((!n.Sign && n.Abs() > n1.Abs()) || (n1.Sign && n1.Abs() > n.Abs()))
+            if ((!n._sign && n.Abs() > n1.Abs()) || (n1._sign && n1.Abs() > n.Abs()))
             {
                 rs = false;
             }
@@ -322,22 +324,57 @@ namespace Calculator
         public static BigNumber operator *(BigNumber n, BigNumber n1)
         {
             BigNumber result = new BigNumber("0");
-            BigNumber num = n.Abs();
-            BigNumber cnt = n1.Abs();
+            BigNumber nAbs = n.Abs();
+            BigNumber n1Abs = n1.Abs();
+            string lev;
+            string gtv;
 
-            if (cnt >= num)
+            // Put number with smaller absolute value in lev
+            if (nAbs > n1Abs)
             {
-                num = n1.Abs();
-                cnt = n.Abs();
+                lev = n1Abs.Value.Replace(".", "");
+                gtv = nAbs.Value.Replace(".", "");
+            }
+            else
+            {
+                lev = nAbs.Value.Replace(".", "");
+                gtv = n1Abs.Value.Replace(".", "");
             }
 
-            while (cnt > zero)
+            int llen = lev.Length;
+            int glen = gtv.Length;
+            int carry = 0;
+            for (int i = llen - 1; i >= 0; i--)
             {
-                result += num;
-                cnt--;
+                if (lev[i] == '0') { continue; }
+
+                string mul = "";
+                for (int j = 0; j < llen - 1 - i; j++) { mul += '0'; }
+
+                for (int j = glen - 1; j >= 0; j--)
+                {
+                    int m = ((gtv[j] - '0') * (lev[i] - '0')) + carry;
+                    if (m > 9)
+                    {
+                        carry = m / 10;
+                        m %= 10;
+                    }
+                    else { carry = 0; }
+
+                    mul = m.ToString() + mul;
+                }
+                if (carry > 0)
+                {
+                    mul = carry.ToString() + mul;
+                    carry = 0;
+                }
+
+                result += new BigNumber(mul);
             }
 
-            return (n.Sign ^ n1.Sign) ? -result : result;
+            int pointIndex = nAbs._decimal.Length + n1Abs._decimal.Length;
+            result = new BigNumber(result.Value.Insert(result.Value.Length - pointIndex, "."));
+            return (n._sign ^ n1._sign) ? -result : result;
         }
 
         /// <summary>
@@ -346,7 +383,7 @@ namespace Calculator
         /// <returns>A bigNumber.</returns>
         public BigNumber Abs()
         {
-            return Sign ? this : -this;
+            return _sign ? this : -this;
         }
     }
 }
