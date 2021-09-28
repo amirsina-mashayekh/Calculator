@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -10,6 +11,8 @@ namespace Calculator
     public partial class MainWindow : Window
     {
         private readonly Brush disabledColor = Brushes.Gray;
+
+        private BigNumber memory;
 
         public MainWindow()
         {
@@ -96,7 +99,7 @@ namespace Calculator
         private void Equals_Click(object sender, RoutedEventArgs e)
         {
             resultBox.Foreground = Brushes.White;
-            resultBox.Text = "Nothing yet...";
+            resultBox.Text = "123.456";
         }
 
         private void Backspace_Click(object sender, RoutedEventArgs e)
@@ -113,14 +116,33 @@ namespace Calculator
             inputBox.CaretIndex = caretIndex - 1;
         }
 
-        private void MemoryClear_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void MemoryStore_Click(object sender, RoutedEventArgs e)
         {
+            if (resultBox.Foreground != disabledColor)
+            {
+                try
+                {
+                    memory = new BigNumber(resultBox.Text);
+                    memoryRecall.IsEnabled = true;
+                    memoryClear.IsEnabled = true;
+                }
+                catch (ArithmeticException) { }
+            }
+        }
 
+        private void MemoryRecall_Click(object sender, RoutedEventArgs e)
+        {
+            if (memory != null)
+            {
+                InsertInput(memory.Value);
+            }
+        }
+
+        private void MemoryClear_Click(object sender, RoutedEventArgs e)
+        {
+            memory = null;
+            memoryRecall.IsEnabled = false;
+            memoryClear.IsEnabled = false;
         }
 
         private void Copy_Click(object sender, RoutedEventArgs e)
