@@ -9,6 +9,8 @@ namespace Calculator
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly Brush disabledColor = Brushes.Gray;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -16,19 +18,19 @@ namespace Calculator
 
         private void ResetResultBox()
         {
-            resultBox.Foreground = Brushes.Gray;
+            resultBox.Foreground = disabledColor;
             resultBox.Text = "Result";
         }
 
         private void ResetInputBox()
         {
-            inputBox.Foreground = Brushes.Gray;
+            inputBox.Foreground = disabledColor;
             inputBox.Text = "Input";
         }
 
         private void InsertInput(string text, int caretIndexOffset = 0)
         {
-            if (inputBox.Foreground == Brushes.Gray)
+            if (inputBox.Foreground == disabledColor)
             {
                 inputBox.Text = "";
                 inputBox.Foreground = Brushes.White;
@@ -41,7 +43,7 @@ namespace Calculator
 
         private void InputBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (inputBox.Foreground == Brushes.Gray)
+            if (inputBox.Foreground == disabledColor)
             {
                 inputBox.Clear();
                 inputBox.Foreground = Brushes.White;
@@ -121,9 +123,12 @@ namespace Calculator
 
         }
 
-        private void Memory_Click(object sender, RoutedEventArgs e)
+        private void Copy_Click(object sender, RoutedEventArgs e)
         {
-
+            if (resultBox.Foreground != disabledColor)
+            {
+                Clipboard.SetText(resultBox.Text);
+            }
         }
 
         private void ButtonsGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
