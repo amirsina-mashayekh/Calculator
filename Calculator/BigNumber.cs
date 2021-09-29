@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Calculator
@@ -8,13 +9,13 @@ namespace Calculator
     /// </summary>
     public class BigNumber : IEquatable<BigNumber>, IComparable<BigNumber>
     {
-        private static readonly BigNumber zero = new BigNumber("0");
+        private static readonly BigNumber zero = new BigNumber(0);
 
-        private static readonly BigNumber ten = new BigNumber("10");
+        private static readonly BigNumber ten = new BigNumber(10);
 
         public bool Sign { get; private set; }
 
-        public string IntegerPart { get; private set; }
+        public string IntegralPart { get; private set; }
 
         public string DecimalPart { get; private set; }
 
@@ -25,7 +26,7 @@ namespace Calculator
                 string val = "";
 
                 if (!Sign) { val += '-'; }
-                val += IntegerPart;
+                val += IntegralPart;
                 if (DecimalPart != "") { val += '.' + DecimalPart; }
 
                 return val;
@@ -43,27 +44,43 @@ namespace Calculator
                 int pointIndex = value.IndexOf('.');
                 if (pointIndex > -1)
                 {
-                    IntegerPart = value[(Sign ? 0 : 1)..pointIndex];
+                    IntegralPart = value[(Sign ? 0 : 1)..pointIndex];
                     DecimalPart = value[(pointIndex + 1)..];
                 }
                 else
                 {
-                    IntegerPart = value[(Sign ? 0 : 1)..];
+                    IntegralPart = value[(Sign ? 0 : 1)..];
                     DecimalPart = "";
                 }
 
-                IntegerPart = IntegerPart.TrimStart('0');
-                if (IntegerPart == "") { IntegerPart = "0"; }
+                IntegralPart = IntegralPart.TrimStart('0');
+                if (IntegralPart == "") { IntegralPart = "0"; }
 
                 DecimalPart = DecimalPart.TrimEnd('0');
 
-                if (IntegerPart == "0" && DecimalPart == "") { Sign = true; }
+                if (IntegralPart == "0" && DecimalPart == "") { Sign = true; }
             }
         }
 
         public BigNumber(string Value)
         {
             this.Value = Value;
+        }
+
+        public BigNumber(decimal Value)
+        {
+            if (Math.Truncate(Value) == Value)
+            {
+                IntegralPart = Math.Abs(Value).ToString(CultureInfo.InvariantCulture);
+                DecimalPart = "";
+            }
+            else
+            {
+                string[] str = Math.Abs(Value).ToString(CultureInfo.InvariantCulture).Split('.');
+                IntegralPart = str[0];
+                DecimalPart = str[1];
+            }
+            Sign = Value >= 0;
         }
 
         public override string ToString()
@@ -88,9 +105,9 @@ namespace Calculator
             }
 
             int result = 0;
-            string i0 = IntegerPart;
+            string i0 = IntegralPart;
             string d0 = DecimalPart;
-            string i1 = other.IntegerPart;
+            string i1 = other.IntegralPart;
             string d1 = other.DecimalPart;
 
             // Make lenght of numbers equal by adding non-significant 0s
@@ -210,12 +227,12 @@ namespace Calculator
 
         public static BigNumber operator ++(BigNumber n)
         {
-            return n + new BigNumber("1");
+            return n + new BigNumber(1);
         }
 
         public static BigNumber operator --(BigNumber n)
         {
-            return n - new BigNumber("1");
+            return n - new BigNumber(1);
         }
 
         public static BigNumber operator *(BigNumber n, BigNumber n1)
@@ -270,12 +287,12 @@ namespace Calculator
             }
 
             int decimalPoints = nAbs.DecimalPart.Length + n1Abs.DecimalPart.Length;
-            while (decimalPoints >= result.IntegerPart.Length)
+            while (decimalPoints >= result.IntegralPart.Length)
             {
                 // Add 0s before number to be able to insert decimal point
-                result.IntegerPart = '0' + result.IntegerPart;
+                result.IntegralPart = '0' + result.IntegralPart;
             }
-            result = new BigNumber(result.IntegerPart.Insert(result.IntegerPart.Length - decimalPoints, "."));
+            result = new BigNumber(result.IntegralPart.Insert(result.IntegralPart.Length - decimalPoints, "."));
             return (n.Sign ^ n1.Sign) ? -result : result;
         }
 
@@ -311,9 +328,9 @@ namespace Calculator
         /// <returns>Sum of absolute values of <c>n</c> and <c>n1</c>.</returns>
         private static BigNumber AbsSum(BigNumber n, BigNumber n1)
         {
-            string i0 = n.IntegerPart;
+            string i0 = n.IntegralPart;
             string d0 = n.DecimalPart;
-            string i1 = n1.IntegerPart;
+            string i1 = n1.IntegralPart;
             string d1 = n1.DecimalPart;
 
             // Make lenght of numbers equal by adding non-significant 0s
@@ -372,16 +389,16 @@ namespace Calculator
             // Put greater number in x0
             if (n.Abs() > n1.Abs())
             {
-                i0 = n.IntegerPart;
+                i0 = n.IntegralPart;
                 d0 = n.DecimalPart;
-                i1 = n1.IntegerPart;
+                i1 = n1.IntegralPart;
                 d1 = n1.DecimalPart;
             }
             else
             {
-                i0 = n1.IntegerPart;
+                i0 = n1.IntegralPart;
                 d0 = n1.DecimalPart;
-                i1 = n.IntegerPart;
+                i1 = n.IntegralPart;
                 d1 = n.DecimalPart;
             }
 
@@ -443,13 +460,13 @@ namespace Calculator
             }
 
             string ri = "";
-            int divLen = divisor.IntegerPart.Length;
+            int divLen = divisor.IntegralPart.Length;
             BigNumber rem = zero.MemberwiseClone() as BigNumber;
-            while (divisioned.IntegerPart.Length > 0 || divisioned > divisor)
+            while (divisioned.IntegralPart.Length > 0 || divisioned > divisor)
             {
-                BigNumber tempDiv = new BigNumber(rem.IntegerPart + divisioned.IntegerPart[0]);
+                BigNumber tempDiv = new BigNumber(rem.IntegralPart + divisioned.IntegralPart[0]);
 
-                BigNumber tmp = new BigNumber("9");
+                BigNumber tmp = new BigNumber(9);
                 BigNumber mul;
 
                 int i = 9;
@@ -458,13 +475,13 @@ namespace Calculator
                     mul = divisor * tmp;
                     if (mul <= tempDiv) { break; }
                     i--;
-                    tmp.IntegerPart = i.ToString();
+                    tmp.IntegralPart = i.ToString();
                 } while (true);
 
                 ri += i.ToString();
 
                 rem = tempDiv - mul;
-                divisioned.IntegerPart = divisioned.IntegerPart[1..];
+                divisioned.IntegralPart = divisioned.IntegralPart[1..];
             }
 
             bool sign = n.Sign ^ n1.Sign;
