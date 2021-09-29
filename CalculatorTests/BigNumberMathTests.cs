@@ -1,8 +1,6 @@
-﻿using Calculator;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using static Calculator.BigNumberMath;
-using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Calculator.Tests
 {
@@ -11,7 +9,7 @@ namespace Calculator.Tests
     {
         private readonly BigNumber zero = new BigNumber(0);
 
-        private readonly BigNumber one = new BigNumber(1);
+        private readonly decimal pi = (decimal)Math.PI;
 
         [TestMethod(), Timeout(100)]
         public void FactorialTest()
@@ -63,7 +61,7 @@ namespace Calculator.Tests
                 Assert.AreEqual(tests[i, 2], pow.Value);
             }
             _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(zero, zero));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(one, new BigNumber(1.1M)));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(new BigNumber(1), new BigNumber(1.1M)));
         }
 
         [TestMethod(), Timeout(100)]
@@ -92,45 +90,60 @@ namespace Calculator.Tests
         [TestMethod()]
         public void SinusTest()
         {
-            Assert.AreEqual(zero, Sinus(zero));
-            Assert.AreEqual(zero, Sinus(new BigNumber((decimal)Math.PI)));
+            Assert.AreEqual("0", Sinus(zero).Value);
+            Assert.AreEqual("0", Sinus(new BigNumber(pi)).Value);
 
-            Assert.AreEqual(one, Sinus(new BigNumber((decimal)(Math.PI / 2))));
-            Assert.AreEqual(-one, Sinus(new BigNumber((decimal)(3 * Math.PI / 2))));
-            Assert.AreEqual(-one, Sinus(new BigNumber((decimal)(-Math.PI / 2))));
+            Assert.AreEqual("1", Sinus(new BigNumber(pi / 2)).Value);
+            Assert.AreEqual("-1", Sinus(new BigNumber(3 * pi / 2)).Value);
+            Assert.AreEqual("-1", Sinus(new BigNumber(-pi / 2)).Value);
 
-            Assert.AreEqual(new BigNumber(0.71M), Sinus(new BigNumber((decimal)(Math.PI / 4))));
-            Assert.AreEqual(new BigNumber(0.71M), Sinus(new BigNumber((decimal)(3 * Math.PI / 4))));
-            Assert.AreEqual(new BigNumber(-0.71M), Sinus(new BigNumber((decimal)(-Math.PI / 4))));
-            Assert.AreEqual(new BigNumber(-0.71M), Sinus(new BigNumber((decimal)(-11 * Math.PI / 4))));
-
-            Assert.AreEqual(new BigNumber(0.5M), Sinus(new BigNumber((decimal)(Math.PI / 6))));
-            Assert.AreEqual(new BigNumber(0.5M), Sinus(new BigNumber((decimal)(5 * Math.PI / 6))));
-            Assert.AreEqual(new BigNumber(-0.5M), Sinus(new BigNumber((decimal)(7 * Math.PI / 6))));
-            Assert.AreEqual(new BigNumber(-0.5M), Sinus(new BigNumber((decimal)(11 * Math.PI / 6))));
-            Assert.AreEqual(new BigNumber(-0.5M), Sinus(new BigNumber((decimal)(-Math.PI / 6))));
+            Assert.AreEqual("0.87", Sinus(new BigNumber(pi / 3)).Value);
+            Assert.AreEqual("0.71", Sinus(new BigNumber(pi / 4)).Value);
+            Assert.AreEqual("0.5", Sinus(new BigNumber(pi / 6)).Value);
         }
 
         [TestMethod()]
         public void CosinusTest()
         {
-            Assert.AreEqual(one, Cosinus(zero));
-            Assert.AreEqual(-one, Cosinus(new BigNumber((decimal)Math.PI)));
+            Assert.AreEqual("1", Cosinus(zero).Value);
+            Assert.AreEqual("-1", Cosinus(new BigNumber(pi)).Value);
 
-            Assert.AreEqual(zero, Cosinus(new BigNumber((decimal)(Math.PI / 2))));
-            Assert.AreEqual(-zero, Cosinus(new BigNumber((decimal)(3 * Math.PI / 2))));
-            Assert.AreEqual(-zero, Cosinus(new BigNumber((decimal)(-Math.PI / 2))));
+            Assert.AreEqual("0", Cosinus(new BigNumber(pi / 2)).Value);
+            Assert.AreEqual("0", Cosinus(new BigNumber(3 * pi / 2)).Value);
+            Assert.AreEqual("0", Cosinus(new BigNumber(-pi / 2)).Value);
 
-            Assert.AreEqual(new BigNumber(0.71M), Cosinus(new BigNumber((decimal)(Math.PI / 4))));
-            Assert.AreEqual(new BigNumber(-0.71M), Cosinus(new BigNumber((decimal)(3 * Math.PI / 4))));
-            Assert.AreEqual(new BigNumber(0.71M), Cosinus(new BigNumber((decimal)(-Math.PI / 4))));
-            Assert.AreEqual(new BigNumber(-0.71M), Cosinus(new BigNumber((decimal)(-3 * Math.PI / 4))));
+            Assert.AreEqual("0.5", Cosinus(new BigNumber(pi / 3)).Value);
+            Assert.AreEqual("0.71", Cosinus(new BigNumber(pi / 4)).Value);
+            Assert.AreEqual("0.87", Cosinus(new BigNumber(pi / 6)).Value);
+        }
 
-            Assert.AreEqual(new BigNumber(0.5M), Cosinus(new BigNumber((decimal)(Math.PI / 3))));
-            Assert.AreEqual(new BigNumber(-0.5M), Cosinus(new BigNumber((decimal)(2 * Math.PI / 3))));
-            Assert.AreEqual(new BigNumber(-0.5M), Cosinus(new BigNumber((decimal)(4 * Math.PI / 3))));
-            Assert.AreEqual(new BigNumber(0.5M), Cosinus(new BigNumber((decimal)(13 * Math.PI / 3))));
-            Assert.AreEqual(new BigNumber(0.5M), Cosinus(new BigNumber((decimal)(-13 * Math.PI / 3))));
+        [TestMethod()]
+        public void TangentTest()
+        {
+            Assert.AreEqual("0", Tangent(zero).Value);
+            Assert.AreEqual("0", Tangent(new BigNumber(pi)).Value);
+            Assert.AreEqual("0", Tangent(new BigNumber(-pi)).Value);
+
+            Assert.AreEqual("1.74", Tangent(new BigNumber(pi / 3)).Value);
+            Assert.AreEqual("1", Tangent(new BigNumber(pi / 4)).Value);
+            Assert.AreEqual("0.57", Tangent(new BigNumber(pi / 6)).Value);
+
+            _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(pi / 2)));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(3 * pi / 2)));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(-pi / 2)));
+        }
+
+        [TestMethod()]
+        public void CotngentTest()
+        {
+            Assert.AreEqual("0", Cotangent(new BigNumber(pi / 2)).Value);
+            Assert.AreEqual("-0.57", Cotangent(new BigNumber(-pi / 3)).Value);
+            Assert.AreEqual("-1", Cotangent(new BigNumber(-pi / 4)).Value);
+            Assert.AreEqual("1.74", Cotangent(new BigNumber(pi / 6)).Value);
+
+            _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(zero));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(new BigNumber(pi)));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(new BigNumber(-2 * pi)));
         }
     }
 }

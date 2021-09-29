@@ -90,37 +90,9 @@ namespace Calculator
 
         public static BigNumber Sinus(BigNumber n)
         {
-            BigNumber num = n - (n / twoPi * twoPi);
-            BigNumber k = new BigNumber(1000);
-            BigNumber sin = new BigNumber(0);
-
-            BigNumber p = new BigNumber(num.Value) * k;
-            BigNumber mul = num * num;
-
-            BigNumber f = new BigNumber(1);
-
-            bool sign = true;
-
-            for (int i = 1; i <= 9; i++)
-            {
-                sin += sign ? p / f : -p / f;
-                sign = !sign;
-                p *= mul;
-                f *= new BigNumber(2 * i * ((2 * i) + 1));
-            }
-
-            sin = DivideWithDecimals(sin, k);
-
-            // Limit the answer to 2 decimals
-            if (sin.DecimalPart.Length > 2)
-            {
-                if (sin.DecimalPart[2] > '4')
-                {
-                    sin += sin.Sign ? new BigNumber(0.01M) : new BigNumber(-0.01M);
-                }
-                sin = new BigNumber((sin.Sign ? "" : "-") + sin.IntegralPart + '.' + sin.DecimalPart.Substring(0, 2));
-            }
-            return sin;
+            // Cosinus taylor calculation is faster so we calculate
+            // cosinus of complement of n which is equal to sinus of it.
+            return Cosinus(new BigNumber((decimal)Math.PI / 2) - n);
         }
 
         public static BigNumber Cosinus(BigNumber n)
@@ -136,7 +108,7 @@ namespace Calculator
 
             bool sign = false;
 
-            for (int i = 2; i <= 9; i++)
+            for (int i = 2; i <= 8; i++)
             {
                 cos += sign ? p / f : -p / f;
                 sign = !sign;
@@ -160,12 +132,34 @@ namespace Calculator
 
         public static BigNumber Tangent(BigNumber n)
         {
-            return DivideWithDecimals(Sinus(n), Cosinus(n));
+            BigNumber tan = DivideWithDecimals(Sinus(n), Cosinus(n));
+
+            if (tan.DecimalPart.Length > 2)
+            {
+                if (tan.DecimalPart[2] > '4')
+                {
+                    tan += tan.Sign ? new BigNumber(0.01M) : new BigNumber(-0.01M);
+                }
+                tan = new BigNumber((tan.Sign ? "" : "-") + tan.IntegralPart + '.' + tan.DecimalPart.Substring(0, 2));
+            }
+
+            return tan;
         }
 
         public static BigNumber Cotangent(BigNumber n)
         {
-            return DivideWithDecimals(Cosinus(n), Sinus(n));
+            BigNumber cot = DivideWithDecimals(Cosinus(n), Sinus(n));
+
+            if (cot.DecimalPart.Length > 2)
+            {
+                if (cot.DecimalPart[2] > '4')
+                {
+                    cot += cot.Sign ? new BigNumber(0.01M) : new BigNumber(-0.01M);
+                }
+                cot = new BigNumber((cot.Sign ? "" : "-") + cot.IntegralPart + '.' + cot.DecimalPart.Substring(0, 2));
+            }
+
+            return cot;
         }
     }
 }
