@@ -9,6 +9,10 @@ namespace Calculator.Tests
     [TestClass()]
     public class BigNumberMathTests
     {
+        private readonly BigNumber zero = new BigNumber(0);
+
+        private readonly BigNumber one = new BigNumber(1);
+
         [TestMethod(), Timeout(100)]
         public void FactorialTest()
         {
@@ -26,15 +30,13 @@ namespace Calculator.Tests
             for (int i = 0; i < tests.GetLength(0); i++)
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
-                BigNumber res = new BigNumber(tests[i, 1]);
                 BigNumber fact = Factorial(n);
-                Debug.Print("res: " + res + "    fact:" + fact);
-                Assert.IsTrue(fact == res);
+                Assert.AreEqual(tests[i, 1], fact.Value);
             }
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => Factorial(new BigNumber("-1")));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Factorial(new BigNumber("1.1")));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Factorial(new BigNumber("-1.1")));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Factorial(new BigNumber(-1)));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Factorial(new BigNumber(1.1M)));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Factorial(new BigNumber(-1.1M)));
         }
 
         [TestMethod(), Timeout(100)]
@@ -50,22 +52,18 @@ namespace Calculator.Tests
                 { "-2", "0", "1" },
                 { "3.3", "3", "35.937" },
                 { "2", "-2", "0.25" },
-                { "-3", "-3", "-0.0370370370" }
+                { "-3", "-3", "-0.037037037" }
             };
 
             for (int i = 0; i < tests.GetLength(0); i++)
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber pow = Exponent(n, n1);
-                Debug.Print("res: " + res + "    pow:" + pow);
-                Assert.IsTrue(pow == res);
+                Assert.AreEqual(tests[i, 2], pow.Value);
             }
-
-            BigNumber zero = new BigNumber("0");
             _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(zero, zero));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(new BigNumber("1"), new BigNumber("1.1")));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(one, new BigNumber(1.1M)));
         }
 
         [TestMethod(), Timeout(100)]
@@ -84,14 +82,55 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber res = new BigNumber(tests[i, 3]);
                 BigNumber div = DivideWithDecimals(n, n1, int.Parse(tests[i, 2]));
-                Debug.Print("res: " + res + "    div:" + div);
-                Assert.IsTrue(div == res);
+                Assert.AreEqual(tests[i, 3], div.Value);
             }
 
-            BigNumber zero = new BigNumber("0");
             _ = Assert.ThrowsException<ArithmeticException>(() => DivideWithDecimals(zero, zero));
+        }
+
+        [TestMethod()]
+        public void SinusTest()
+        {
+            Assert.AreEqual(zero, Sinus(zero));
+            Assert.AreEqual(zero, Sinus(new BigNumber((decimal)Math.PI)));
+
+            Assert.AreEqual(one, Sinus(new BigNumber((decimal)(Math.PI / 2))));
+            Assert.AreEqual(-one, Sinus(new BigNumber((decimal)(3 * Math.PI / 2))));
+            Assert.AreEqual(-one, Sinus(new BigNumber((decimal)(-Math.PI / 2))));
+
+            Assert.AreEqual(new BigNumber(0.71M), Sinus(new BigNumber((decimal)(Math.PI / 4))));
+            Assert.AreEqual(new BigNumber(0.71M), Sinus(new BigNumber((decimal)(3 * Math.PI / 4))));
+            Assert.AreEqual(new BigNumber(-0.71M), Sinus(new BigNumber((decimal)(-Math.PI / 4))));
+            Assert.AreEqual(new BigNumber(-0.71M), Sinus(new BigNumber((decimal)(-11 * Math.PI / 4))));
+
+            Assert.AreEqual(new BigNumber(0.5M), Sinus(new BigNumber((decimal)(Math.PI / 6))));
+            Assert.AreEqual(new BigNumber(0.5M), Sinus(new BigNumber((decimal)(5 * Math.PI / 6))));
+            Assert.AreEqual(new BigNumber(-0.5M), Sinus(new BigNumber((decimal)(7 * Math.PI / 6))));
+            Assert.AreEqual(new BigNumber(-0.5M), Sinus(new BigNumber((decimal)(11 * Math.PI / 6))));
+            Assert.AreEqual(new BigNumber(-0.5M), Sinus(new BigNumber((decimal)(-Math.PI / 6))));
+        }
+
+        [TestMethod()]
+        public void CosinusTest()
+        {
+            Assert.AreEqual(one, Cosinus(zero));
+            Assert.AreEqual(-one, Cosinus(new BigNumber((decimal)Math.PI)));
+
+            Assert.AreEqual(zero, Cosinus(new BigNumber((decimal)(Math.PI / 2))));
+            Assert.AreEqual(-zero, Cosinus(new BigNumber((decimal)(3 * Math.PI / 2))));
+            Assert.AreEqual(-zero, Cosinus(new BigNumber((decimal)(-Math.PI / 2))));
+
+            Assert.AreEqual(new BigNumber(0.71M), Cosinus(new BigNumber((decimal)(Math.PI / 4))));
+            Assert.AreEqual(new BigNumber(-0.71M), Cosinus(new BigNumber((decimal)(3 * Math.PI / 4))));
+            Assert.AreEqual(new BigNumber(0.71M), Cosinus(new BigNumber((decimal)(-Math.PI / 4))));
+            Assert.AreEqual(new BigNumber(-0.71M), Cosinus(new BigNumber((decimal)(-3 * Math.PI / 4))));
+
+            Assert.AreEqual(new BigNumber(0.5M), Cosinus(new BigNumber((decimal)(Math.PI / 3))));
+            Assert.AreEqual(new BigNumber(-0.5M), Cosinus(new BigNumber((decimal)(2 * Math.PI / 3))));
+            Assert.AreEqual(new BigNumber(-0.5M), Cosinus(new BigNumber((decimal)(4 * Math.PI / 3))));
+            Assert.AreEqual(new BigNumber(0.5M), Cosinus(new BigNumber((decimal)(13 * Math.PI / 3))));
+            Assert.AreEqual(new BigNumber(0.5M), Cosinus(new BigNumber((decimal)(-13 * Math.PI / 3))));
         }
     }
 }

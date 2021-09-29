@@ -85,7 +85,7 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 Debug.Print("n: " + n + "  ==  -:" + tests[i, 1]);
-                Assert.AreEqual((-n).Value, tests[i, 1]);
+                Assert.AreEqual(tests[i, 1], (-n).Value);
             }
         }
 
@@ -176,28 +176,26 @@ namespace Calculator.Tests
                 { "-1", "0", "-1" },
                 { "2", "-1", "1" },
                 { "-2", "1", "-1" },
-                { "999.001", "000.999", "1000.000" },
-                { "-606.0606", "-404.0404", "-1010.1010" },
+                { "999.001", "000.999", "1000" },
+                { "-606.0606", "-404.0404", "-1010.101" },
                 { "999.999", "-111.111", "888.888" },
                 { "-999.9990", "0111.111", "-888.888" },
-                { "10101.01010", "-0909.0909", "0009191.9192" },
-                { "-10101.0101", "909.0909", "-9191.919200" }
+                { "10101.01010", "-0909.0909", "9191.9192" },
+                { "-10101.0101", "909.0909", "-9191.9192" }
             };
 
             for (int i = 0; i < tests.GetLength(0); i++)
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber sum = n + n1;
-                Debug.Print("res: " + res + "    sum:" + sum);
-                Assert.IsTrue(sum == res);
+                Assert.AreEqual(tests[i, 2], sum.Value);
             }
 
-            BigNumber num0 = new BigNumber("-2");
+            BigNumber num0 = new BigNumber(-2);
             num0++;
-            Assert.IsTrue(num0++ == new BigNumber("-1"));
-            Assert.IsTrue(++num0 == new BigNumber("1"));
+            Assert.AreEqual(new BigNumber(-1), num0++);
+            Assert.AreEqual(new BigNumber(1), ++num0);
         }
 
         [TestMethod(), Timeout(100)]
@@ -215,26 +213,24 @@ namespace Calculator.Tests
                 { "-1", "-2", "1" },
                 { "999.999", "111.111", "888.888" },
                 { "-999.9990", "-0111.111", "-888.888" },
-                { "10101.01010", "0909.0909", "0009191.9192" },
-                { "-10101.0101", "-909.0909", "-9191.919200" },
-                { "999.001", "-000.999", "1000.000" },
-                { "-606.0606", "404.0404", "-1010.1010" }
+                { "10101.01010", "0909.0909", "9191.9192" },
+                { "-10101.0101", "-909.0909", "-9191.9192" },
+                { "999.001", "-000.999", "1000" },
+                { "-606.0606", "404.0404", "-1010.101" }
             };
 
             for (int i = 0; i < tests.GetLength(0); i++)
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber dif = n - n1;
-                Debug.Print("res: " + res + "    dif:" + dif);
-                Assert.IsTrue(dif == res);
+                Assert.AreEqual(tests[i, 2], dif.Value);
             }
 
-            BigNumber num0 = new BigNumber("2");
+            BigNumber num0 = new BigNumber(2);
             num0--;
-            Assert.IsTrue(num0-- == new BigNumber("1"));
-            Assert.IsTrue(--num0 == new BigNumber("-1"));
+            Assert.AreEqual(new BigNumber(1), num0--);
+            Assert.AreEqual(new BigNumber(-1), --num0);
         }
 
         [TestMethod(), Timeout(100)]
@@ -258,10 +254,8 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber mul = n * n1;
-                Debug.Print("res: " + res + "    mul:" + mul);
-                Assert.IsTrue(mul == res);
+                Assert.AreEqual(tests[i, 2], mul.Value);
             }
         }
 
@@ -281,13 +275,11 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber div = n / n1;
-                Debug.Print("res: " + res + "    div:" + div);
-                Assert.IsTrue(div == res);
+                Assert.AreEqual(tests[i, 2], div.Value);
             }
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1") / new BigNumber("0"));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) / new BigNumber(0));
         }
 
         [TestMethod(), Timeout(100)]
@@ -305,16 +297,14 @@ namespace Calculator.Tests
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber res = new BigNumber(tests[i, 2]);
                 BigNumber mod = n % n1;
-                Debug.Print("res: " + res + "    mod:" + mod);
-                Assert.IsTrue(mod == res);
+                Assert.AreEqual(tests[i, 2], mod.Value);
             }
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1") % new BigNumber("0"));
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1.1") % new BigNumber("1"));
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1") % new BigNumber("1.1"));
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber("1.1") % new BigNumber("1.1"));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) % new BigNumber(0));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) % new BigNumber(1.1M));
+            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1.1M));
         }
     }
 }
