@@ -238,36 +238,32 @@ namespace Calculator
         public static BigNumber operator *(BigNumber n, BigNumber n1)
         {
             BigNumber result = zero.MemberwiseClone() as BigNumber;
-            BigNumber nAbs = n.Abs();
-            BigNumber n1Abs = n1.Abs();
-            string lev;
-            string gtv;
+            string lnz = n.Abs().Value.Replace(".", "");
+            string mnz = n1.Abs().Value.Replace(".", "");
 
-            // Put number with smaller absolute value in lev
-            if (nAbs > n1Abs)
+            // Put number with less non-zero characters in lnz
+            int nnz = lnz.Replace("0", "").Length;
+            int n1nz = mnz.Replace("0", "").Length;
+            if (nnz > n1nz)
             {
-                lev = n1Abs.Value.Replace(".", "");
-                gtv = nAbs.Value.Replace(".", "");
-            }
-            else
-            {
-                lev = nAbs.Value.Replace(".", "");
-                gtv = n1Abs.Value.Replace(".", "");
+                string tmp = lnz;
+                lnz = mnz;
+                mnz = tmp;
             }
 
-            int llen = lev.Length;
-            int glen = gtv.Length;
+            int llen = lnz.Length;
+            int glen = mnz.Length;
             int carry = 0;
             for (int i = llen - 1; i >= 0; i--)
             {
-                if (lev[i] == '0') { continue; }
+                if (lnz[i] == '0') { continue; }
 
                 string mul = "";
                 for (int j = 0; j < llen - 1 - i; j++) { mul += '0'; }
 
                 for (int j = glen - 1; j >= 0; j--)
                 {
-                    int m = ((gtv[j] - '0') * (lev[i] - '0')) + carry;
+                    int m = ((mnz[j] - '0') * (lnz[i] - '0')) + carry;
                     if (m > 9)
                     {
                         carry = m / 10;
@@ -286,7 +282,7 @@ namespace Calculator
                 result += new BigNumber(mul);
             }
 
-            int decimalPoints = nAbs.DecimalPart.Length + n1Abs.DecimalPart.Length;
+            int decimalPoints = n.DecimalPart.Length + n1.DecimalPart.Length;
             while (decimalPoints >= result.IntegralPart.Length)
             {
                 // Add 0s before number to be able to insert decimal point

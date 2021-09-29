@@ -64,8 +64,8 @@ namespace Calculator.Tests
 
             Assert.AreEqual(new BigNumber(0), new BigNumber("0"));
             Assert.AreEqual(new BigNumber(1), new BigNumber("1"));
-            Assert.AreEqual(new BigNumber((decimal)1.1), new BigNumber("1.1"));
-            Assert.AreEqual(new BigNumber((decimal)-1.1), new BigNumber("-1.1"));
+            Assert.AreEqual(new BigNumber(1.1M), new BigNumber("1.1"));
+            Assert.AreEqual(new BigNumber(-1.1M), new BigNumber("-1.1"));
         }
 
         [TestMethod(), Timeout(100)]
