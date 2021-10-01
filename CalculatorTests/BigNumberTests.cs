@@ -280,7 +280,7 @@ namespace BigNumbers.Tests
                 Assert.AreEqual(tests[i, 2], div.Value);
             }
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) / new BigNumber(0));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => new BigNumber(1) / new BigNumber(0));
         }
 
         [TestMethod(), Timeout(100)]
@@ -302,7 +302,7 @@ namespace BigNumbers.Tests
                 Assert.AreEqual(tests[i, 2], mod.Value);
             }
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) % new BigNumber(0));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => new BigNumber(1) % new BigNumber(0));
             _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1));
             _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) % new BigNumber(1.1M));
             _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1.1M));

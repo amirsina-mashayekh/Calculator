@@ -84,7 +84,7 @@ namespace BigNumbers.Tests
                 Assert.AreEqual(tests[i, 3], div.Value);
             }
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => DivideWithDecimals(zero, zero));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => DivideWithDecimals(zero, zero));
         }
 
         [TestMethod()]
@@ -128,9 +128,9 @@ namespace BigNumbers.Tests
             Assert.AreEqual("1", Tangent(new BigNumber(pi / 4)).Value);
             Assert.AreEqual("0.577", Tangent(new BigNumber(pi / 6)).Value);
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(pi / 2)));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(3 * pi / 2)));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(-pi / 2)));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => Tangent(new BigNumber(pi / 2)));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => Tangent(new BigNumber(3 * pi / 2)));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => Tangent(new BigNumber(-pi / 2)));
         }
 
         [TestMethod()]
@@ -141,9 +141,9 @@ namespace BigNumbers.Tests
             Assert.AreEqual("-1", Cotangent(new BigNumber(-pi / 4)).Value);
             Assert.AreEqual("1.732", Cotangent(new BigNumber(pi / 6)).Value);
 
-            _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(zero));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(new BigNumber(pi)));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(new BigNumber(-2 * pi)));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => Cotangent(zero));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => Cotangent(new BigNumber(pi)));
+            _ = Assert.ThrowsException<DivideByZeroException>(() => Cotangent(new BigNumber(-2 * pi)));
         }
     }
 }

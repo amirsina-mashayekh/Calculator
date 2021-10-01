@@ -452,7 +452,7 @@ namespace BigNumbers
         /// <returns>Quotient of <c>n/n1</c>.</returns>
         private static BigNumber DivideAndRemainder(BigNumber n, BigNumber n1, out BigNumber remainder)
         {
-            if (n1 == zero) { throw new ArithmeticException("Can't divide by zero."); }
+            if (n1 == zero) { throw new DivideByZeroException(); }
 
             BigNumber divisioned = (n.MemberwiseClone() as BigNumber).Abs();
             BigNumber divisor = (n1.MemberwiseClone() as BigNumber).Abs();
