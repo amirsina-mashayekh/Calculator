@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Calculator
+namespace BigNumbers
 {
     /// <summary>
     /// Advanced arithmetic for BigNumbers.
     /// </summary>
-    public class BigNumberMath
+    public static class BigNumberMath
     {
         private static readonly BigNumber zero = new BigNumber(0);
 
@@ -92,7 +92,7 @@ namespace Calculator
         {
             // Cosinus taylor calculation is faster so we calculate
             // cosinus of complement of n which is equal to sinus of n.
-            return Cosinus(new BigNumber((decimal)Math.PI / 2) - n);
+            return Cosinus(new BigNumber((decimal)System.Math.PI / 2) - n);
         }
 
         public static BigNumber Cosinus(BigNumber n)
@@ -115,7 +115,7 @@ namespace Calculator
                 f *= 2 * i * ((2 * i) - 1);
             }
 
-            cos = Math.Round(cos, 3);
+            cos = System.Math.Round(cos, 3);
 
             return new BigNumber((decimal)cos);
         }

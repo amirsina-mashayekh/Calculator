@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using static Calculator.BigNumberMath;
+using static BigNumbers.BigNumberMath;
 
-namespace Calculator.Tests
+namespace BigNumbers.Tests
 {
     [TestClass()]
     public class BigNumberMathTests
