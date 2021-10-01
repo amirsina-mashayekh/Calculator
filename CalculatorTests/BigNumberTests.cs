@@ -1,9 +1,8 @@
-﻿using Calculator;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 
-namespace Calculator.Tests
+namespace BigNumbers.Tests
 {
     [TestClass()]
     public class BigNumberTests
@@ -320,10 +319,10 @@ namespace Calculator.Tests
             Assert.AreEqual(decimal.MaxValue, new BigNumber(decimal.MaxValue).ToDecimal());
             Assert.AreEqual(decimal.MinValue, new BigNumber(decimal.MinValue).ToDecimal());
             Assert.AreEqual((decimal)Math.PI, new BigNumber((decimal)Math.PI).ToDecimal());
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("79228162514264337593543950336").ToDecimal());
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("-79228162514264337593543950336").ToDecimal());
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("792281625142643375935439503350").ToDecimal());
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("-792281625142643375935439503350").ToDecimal());
+            _ = Assert.ThrowsException<OverflowException>(() => new BigNumber("79228162514264337593543950336").ToDecimal());
+            _ = Assert.ThrowsException<OverflowException>(() => new BigNumber("-79228162514264337593543950336").ToDecimal());
+            _ = Assert.ThrowsException<OverflowException>(() => new BigNumber("792281625142643375935439503350").ToDecimal());
+            _ = Assert.ThrowsException<OverflowException>(() => new BigNumber("-792281625142643375935439503350").ToDecimal());
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace Calculator
+namespace BigNumbers
 {
     /// <summary>
     /// Save and basic arithmetic for big numbers.
@@ -73,14 +73,14 @@ namespace Calculator
 
         public BigNumber(decimal Value)
         {
-            if (Math.Truncate(Value) == Value)
+            if (System.Math.Truncate(Value) == Value)
             {
-                IntegralPart = Math.Abs(Value).ToString(CultureInfo.InvariantCulture);
+                IntegralPart = System.Math.Abs(Value).ToString(CultureInfo.InvariantCulture);
                 DecimalPart = "";
             }
             else
             {
-                string[] str = Math.Abs(Value).ToString(CultureInfo.InvariantCulture).Split('.');
+                string[] str = System.Math.Abs(Value).ToString(CultureInfo.InvariantCulture).Split('.');
                 IntegralPart = str[0];
                 DecimalPart = str[1];
             }
@@ -94,11 +94,7 @@ namespace Calculator
 
         public decimal ToDecimal()
         {
-            bool a = this > decimalMax;
-            bool b = this < decimalMin;
-            return a || b
-                ? throw new ArgumentOutOfRangeException("Value doesn't fit in decimal.")
-                : decimal.Parse(Value);
+            return decimal.Parse(Value);
         }
 
         /// <summary>
