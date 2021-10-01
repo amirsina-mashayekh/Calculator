@@ -79,7 +79,7 @@ namespace Calculator
 
         private void Integral_Click(object sender, RoutedEventArgs e)
         {
-            InsertInput("integral(,,)", -3);
+            InsertInput("\u222B(,,)", -3);
         }
 
         private void Power_Click(object sender, RoutedEventArgs e)
