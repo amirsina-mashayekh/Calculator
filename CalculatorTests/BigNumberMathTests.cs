@@ -109,7 +109,7 @@ namespace Calculator.Tests
             Assert.AreEqual("-1", Cosinus(new BigNumber(pi)).Value);
 
             Assert.AreEqual("0", Cosinus(new BigNumber(pi / 2)).Value);
-            Assert.AreEqual("0", Cosinus(new BigNumber(3 * pi / 2)).Value);
+            Assert.AreEqual("0", Cosinus(new BigNumber(11 * pi / 2)).Value);
             Assert.AreEqual("0", Cosinus(new BigNumber(-pi / 2)).Value);
 
             Assert.AreEqual("0.5", Cosinus(new BigNumber(pi / 3)).Value);
@@ -134,7 +134,7 @@ namespace Calculator.Tests
         }
 
         [TestMethod()]
-        public void CotngentTest()
+        public void CotangentTest()
         {
             Assert.AreEqual("0", Cotangent(new BigNumber(pi / 2)).Value);
             Assert.AreEqual("-0.57", Cotangent(new BigNumber(-pi / 3)).Value);

@@ -13,6 +13,10 @@ namespace Calculator
 
         private static readonly BigNumber ten = new BigNumber(10);
 
+        private static readonly BigNumber decimalMax = new BigNumber(decimal.MaxValue);
+
+        private static readonly BigNumber decimalMin = new BigNumber(decimal.MinValue);
+
         public bool Sign { get; private set; }
 
         public string IntegralPart { get; private set; }
@@ -88,6 +92,15 @@ namespace Calculator
             return Value;
         }
 
+        public decimal ToDecimal()
+        {
+            bool a = this > decimalMax;
+            bool b = this < decimalMin;
+            return a || b
+                ? throw new ArgumentOutOfRangeException("Value doesn't fit in decimal.")
+                : decimal.Parse(Value);
+        }
+
         /// <summary>
         /// Compares this instance to a specified <c>BigNumber</c> and returns an indication of their relative values.
         /// </summary>
@@ -123,7 +136,7 @@ namespace Calculator
                 else if (i0[i] < i1[i]) { result = -1; }
                 if (result != 0) { break; }
             }
-            if (result != 0) { return result; }
+            if (result != 0) { return Sign ? result : -result; }
 
             for (int i = 0; i < d0.Length; i++)
             {

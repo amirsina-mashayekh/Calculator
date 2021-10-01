@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Calculator;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 
@@ -139,9 +140,10 @@ namespace Calculator.Tests
             string[,] t1 =
             {
                 { "0", "1" },
+                { "-79228162514264337593543950335", "-1" },
                 { "-1", "0" },
                 { "12340", "012341" },
-                { "-012340", "-12341" },
+                { "-012341", "-12340" },
                 { "-012341", "12340" },
                 { "1.0000001", "1.0021" },
                 { "-1.0021", "-1.0000001" },
@@ -305,6 +307,23 @@ namespace Calculator.Tests
             _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1));
             _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) % new BigNumber(1.1M));
             _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1.1M));
+        }
+
+        [TestMethod()]
+        public void ToDecimalTest()
+        {
+            Assert.AreEqual(0M, new BigNumber("0").ToDecimal());
+            Assert.AreEqual(1M, new BigNumber("1").ToDecimal());
+            Assert.AreEqual(-1M, new BigNumber("-1").ToDecimal());
+            Assert.AreEqual(1.1M, new BigNumber("1.1").ToDecimal());
+            Assert.AreEqual(-1.1M, new BigNumber("-1.1").ToDecimal());
+            Assert.AreEqual(decimal.MaxValue, new BigNumber(decimal.MaxValue).ToDecimal());
+            Assert.AreEqual(decimal.MinValue, new BigNumber(decimal.MinValue).ToDecimal());
+            Assert.AreEqual((decimal)Math.PI, new BigNumber((decimal)Math.PI).ToDecimal());
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("79228162514264337593543950336").ToDecimal());
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("-79228162514264337593543950336").ToDecimal());
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("792281625142643375935439503350").ToDecimal());
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => new BigNumber("-792281625142643375935439503350").ToDecimal());
         }
     }
 }
