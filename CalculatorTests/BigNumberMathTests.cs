@@ -97,8 +97,8 @@ namespace Calculator.Tests
             Assert.AreEqual("-1", Sinus(new BigNumber(3 * pi / 2)).Value);
             Assert.AreEqual("-1", Sinus(new BigNumber(-pi / 2)).Value);
 
-            Assert.AreEqual("0.87", Sinus(new BigNumber(pi / 3)).Value);
-            Assert.AreEqual("0.71", Sinus(new BigNumber(pi / 4)).Value);
+            Assert.AreEqual("0.866", Sinus(new BigNumber(pi / 3)).Value);
+            Assert.AreEqual("0.707", Sinus(new BigNumber(pi / 4)).Value);
             Assert.AreEqual("0.5", Sinus(new BigNumber(pi / 6)).Value);
         }
 
@@ -113,8 +113,8 @@ namespace Calculator.Tests
             Assert.AreEqual("0", Cosinus(new BigNumber(-pi / 2)).Value);
 
             Assert.AreEqual("0.5", Cosinus(new BigNumber(pi / 3)).Value);
-            Assert.AreEqual("0.71", Cosinus(new BigNumber(pi / 4)).Value);
-            Assert.AreEqual("0.87", Cosinus(new BigNumber(pi / 6)).Value);
+            Assert.AreEqual("0.707", Cosinus(new BigNumber(pi / 4)).Value);
+            Assert.AreEqual("0.866", Cosinus(new BigNumber(pi / 6)).Value);
         }
 
         [TestMethod()]
@@ -124,9 +124,9 @@ namespace Calculator.Tests
             Assert.AreEqual("0", Tangent(new BigNumber(pi)).Value);
             Assert.AreEqual("0", Tangent(new BigNumber(-pi)).Value);
 
-            Assert.AreEqual("1.74", Tangent(new BigNumber(pi / 3)).Value);
+            Assert.AreEqual("1.732", Tangent(new BigNumber(pi / 3)).Value);
             Assert.AreEqual("1", Tangent(new BigNumber(pi / 4)).Value);
-            Assert.AreEqual("0.57", Tangent(new BigNumber(pi / 6)).Value);
+            Assert.AreEqual("0.577", Tangent(new BigNumber(pi / 6)).Value);
 
             _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(pi / 2)));
             _ = Assert.ThrowsException<ArithmeticException>(() => Tangent(new BigNumber(3 * pi / 2)));
@@ -137,9 +137,9 @@ namespace Calculator.Tests
         public void CotangentTest()
         {
             Assert.AreEqual("0", Cotangent(new BigNumber(pi / 2)).Value);
-            Assert.AreEqual("-0.57", Cotangent(new BigNumber(-pi / 3)).Value);
+            Assert.AreEqual("-0.577", Cotangent(new BigNumber(-pi / 3)).Value);
             Assert.AreEqual("-1", Cotangent(new BigNumber(-pi / 4)).Value);
-            Assert.AreEqual("1.74", Cotangent(new BigNumber(pi / 6)).Value);
+            Assert.AreEqual("1.732", Cotangent(new BigNumber(pi / 6)).Value);
 
             _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(zero));
             _ = Assert.ThrowsException<ArithmeticException>(() => Cotangent(new BigNumber(pi)));
