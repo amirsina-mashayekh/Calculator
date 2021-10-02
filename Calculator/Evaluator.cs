@@ -9,36 +9,43 @@ namespace Calculator
     {
         public class Operator
         {
+            public string Token { get; }
             public Func<BigNumber, BigNumber,BigNumber> Operate { get; }
             public int Precedence { get; }
             public bool Unary { get; }
 
-            public Operator(Func<BigNumber, BigNumber, BigNumber> operate, int precedence, bool twoOperands)
+            public Operator(string token, Func<BigNumber, BigNumber, BigNumber> operate, int precedence, bool twoOperands)
             {
+                Token = token ?? throw new ArgumentNullException(nameof(token));
                 Operate = operate ?? throw new ArgumentNullException(nameof(operate));
                 Precedence = precedence;
                 Unary = twoOperands;
+            }
+
+            public override string ToString()
+            {
+                return Token;
             }
         }
 
         public static readonly Dictionary<string, Operator> operators = new Dictionary<string, Operator>
         {
-            { "(", new Operator((n, n1) => null, 0, false) },
-            { ")", new Operator((n, n1) => null, 0, false) },
-            { "+", new Operator((n, n1) => n + n1, 3, false) },
-            { "-", new Operator((n, n1) => n - n1, 3, false) },
-            { "*", new Operator((n, n1) => n * n1, 2, false) },
-            { "/", new Operator((n, n1) => DivideWithDecimals(n, n1), 2, false) },
-            { "mod", new Operator((n, n1) => n % n1, 2, false) },
-            { "pow", new Operator((n, n1) => Exponent(n, n1), 1, false) },
-            { "pos", new Operator((n, n1) => n, 2, true) },
-            { "neg", new Operator((n, n1) => -n, 2, true) },
-            { "abs", new Operator((n, n1) => n.Abs(), 0, true) },
-            { "fact", new Operator((n, n1) => Factorial(n), 0, true) },
-            { "sin", new Operator((n, n1) => Sinus(n), 0, true) },
-            { "cos", new Operator((n, n1) => Cosinus(n), 0, true) },
-            { "tan", new Operator((n, n1) => Tangent(n), 0, true) },
-            { "cot", new Operator((n, n1) => Cotangent(n), 0, true) }
+            { "(", new Operator("(", (n, n1) => null, 1000, false) },
+            { ")", new Operator(")", (n, n1) => null, 1000, false) },
+            { "+", new Operator("+", (n, n1) => n + n1, 4, false) },
+            { "-", new Operator("-", (n, n1) => n - n1, 4, false) },
+            { "*", new Operator("*", (n, n1) => n * n1, 3, false) },
+            { "/", new Operator("/", (n, n1) => DivideWithDecimals(n, n1), 3, false) },
+            { "mod", new Operator("mod", (n, n1) => n % n1, 3, false) },
+            { "pow", new Operator("pow", (n, n1) => Exponent(n, n1), 1, false) },
+            { "pos", new Operator("pos", (n, n1) => n, 2, true) },
+            { "neg", new Operator("neg", (n, n1) => -n, 2, true) },
+            { "abs", new Operator("abs", (n, n1) => n.Abs(), 0, true) },
+            { "fact", new Operator("fact", (n, n1) => Factorial(n), 0, true) },
+            { "sin", new Operator("sin", (n, n1) => Sinus(n), 0, true) },
+            { "cos", new Operator("cos", (n, n1) => Cosinus(n), 0, true) },
+            { "tan", new Operator("tan", (n, n1) => Tangent(n), 0, true) },
+            { "cot", new Operator("cot", (n, n1) => Cotangent(n), 0, true) }
         };
 
         /// <summary>
@@ -99,7 +106,7 @@ namespace Calculator
         /// which is RPN equivalent for <c>infix</c>.
         /// </returns>
         /// <exception cref="ArgumentException"></exception>
-        public static object[] InfixtoRPN(object[] infix)
+        public static object[] InfixToRPN(object[] infix)
         {
             Stack<Operator> ops = new Stack<Operator>();
             List<object> rpn = new List<object>();
@@ -127,7 +134,11 @@ namespace Calculator
                     }
                     else
                     {
-                        
+                        while (UnwindOperators(ops, t))
+                        {
+                            rpn.Add(ops.Pop());
+                        }
+                        ops.Push(t);
                     }
                 }
                 else
@@ -135,12 +146,28 @@ namespace Calculator
                     throw new ArgumentException("Invalid token in RPN expression.");
                 }
             }
-            throw new NotImplementedException();
+
+            while (ops.Count > 0)
+            {
+                rpn.Add(ops.Pop());
+            }
+            return rpn.ToArray();
         }
 
-        private static bool UnwindOperators(Stack<string> ops, Operator nextToken)
+        /// <summary>
+        /// Checks if operator stack should be unwinded.
+        /// </summary>
+        /// <param name="ops">The stack of operators.</param>
+        /// <param name="nextToken">Next token in the expression.</param>
+        /// <returns>
+        /// <c>true</c> if operator stack should be unwinded,
+        /// otherwise <c>false</c>.
+        /// </returns>
+        private static bool UnwindOperators(Stack<Operator> ops, Operator nextToken)
         {
-            throw new NotImplementedException();
+            if (ops.Count == 0) { return false; }
+
+            return ops.Peek().Precedence <= nextToken.Precedence;
         }
     }
 }
