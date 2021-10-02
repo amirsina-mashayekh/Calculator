@@ -38,7 +38,7 @@ namespace BigNumbers.Tests
         }
 
         [TestMethod(), Timeout(100)]
-        public void ExponentTest()
+        public void PowerTest()
         {
             string[,] tests =
             {
@@ -57,11 +57,11 @@ namespace BigNumbers.Tests
             {
                 BigNumber n = new BigNumber(tests[i, 0]);
                 BigNumber n1 = new BigNumber(tests[i, 1]);
-                BigNumber pow = Exponent(n, n1);
+                BigNumber pow = Power(n, n1);
                 Assert.AreEqual(tests[i, 2], pow.Value);
             }
-            _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(zero, zero));
-            _ = Assert.ThrowsException<ArithmeticException>(() => Exponent(new BigNumber(1), new BigNumber(1.1M)));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Power(zero, zero));
+            _ = Assert.ThrowsException<ArithmeticException>(() => Power(new BigNumber(1), new BigNumber(1.1M)));
         }
 
         [TestMethod(), Timeout(100)]

@@ -59,7 +59,7 @@ namespace BigNumbers
             return result;
         }
 
-        public static BigNumber Exponent(BigNumber n, BigNumber n1)
+        public static BigNumber Power(BigNumber n, BigNumber n1)
         {
             if (n1.DecimalPart.Count != 0)
             {
@@ -82,7 +82,7 @@ namespace BigNumbers
             }
             else
             {
-                result = DivideWithDecimals(one, Exponent(n, -n1));
+                result = DivideWithDecimals(one, Power(n, -n1));
             }
 
             return result;
