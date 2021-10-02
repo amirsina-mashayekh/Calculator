@@ -7,6 +7,40 @@ namespace Calculator
 {
     public static class Evaluator
     {
+        private class Operator
+        {
+            public string Token { get; }
+            public int Precedence { get; }
+            public Func<BigNumber, BigNumber,BigNumber> Operate { get; }
+            public bool Unary { get; }
+
+            public Operator(string token, int precedence, Func<BigNumber, BigNumber, BigNumber> operate, bool twoOperands)
+            {
+                Token = token ?? throw new ArgumentNullException(nameof(token));
+                Precedence = precedence;
+                Operate = operate ?? throw new ArgumentNullException(nameof(operate));
+                Unary = twoOperands;
+            }
+        }
+
+        private static readonly Operator[] Operators =
+        {
+            new Operator("+", 0, (n, n1) => n + n1, false),
+            new Operator("-", 0, (n, n1) => n - n1, false),
+            new Operator("*", 0, (n, n1) => n * n1, false),
+            new Operator("/", 0, (n, n1) => DivideWithDecimals(n, n1), false),
+            new Operator("mod", 0, (n, n1) => n % n1, false),
+            new Operator("pow", 0, (n, n1) => Exponent(n, n1), false),
+            new Operator("pos", 0, (n, n1) => n, true),
+            new Operator("neg", 0, (n, n1) => -n, true),
+            new Operator("abs", 0, (n, n1) => n.Abs(), true),
+            new Operator("fact", 0, (n, n1) => Factorial(n), true),
+            new Operator("sin", 0, (n, n1) => Sinus(n), true),
+            new Operator("cos", 0, (n, n1) => Cosinus(n), true),
+            new Operator("tan", 0, (n, n1) => Tangent(n), true),
+            new Operator("cot", 0, (n, n1) => Cotangent(n), true)
+        };
+
         /// <summary>
         /// Evaluates a Reverse Polish notation expression.
         /// </summary>
@@ -39,29 +73,29 @@ namespace Calculator
         /// <summary>
         /// Applies the operator on last <c>BigNumber</c>(s) in a stack.
         /// </summary>
-        /// <param name="Operator">The operator to be applied.</param>
+        /// <param name="op">The operator to be applied.</param>
         /// <param name="stack">The stack of <c>BigNumber</c>s.</param>
         /// <returns>A <c>BigNumber</c> showing the result of operation.</returns>
-        private static BigNumber Operate(string Operator, Stack<BigNumber> stack)
+        private static BigNumber Operate(string op, Stack<BigNumber> stack)
         {
             BigNumber num = stack.Pop();
 
-            return Operator switch
+            foreach (Operator o in Operators)
             {
-                "+" => stack.Pop() + num,
-                "-" => stack.Pop() - num,
-                "*" => stack.Pop() * num,
-                "/" => DivideWithDecimals(stack.Pop(), num),
-                "%" => stack.Pop() % num,
-                "^" => Exponent(stack.Pop(), num),
-                "|" => num.Abs(),
-                "!" => Factorial(num),
-                "sin" => Sinus(num),
-                "cos" => Cosinus(num),
-                "tan" => Tangent(num),
-                "cot" => Cotangent(num),
-                _ => throw new ArgumentException("Invalid operator: " + Operator),
-            };
+                if (o.Token == op)
+                {
+                    if (o.Unary)
+                    {
+                        return o.Operate(num, null);
+                    }
+                    else
+                    {
+                        return o.Operate(stack.Pop(), num);
+                    }
+                }
+            }
+
+            throw new ArgumentException("Invalid operator: " + op);
         }
     }
 }

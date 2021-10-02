@@ -24,8 +24,8 @@ namespace Calculator.Tests
 
             object[] test =
             {
-                _5_3, _2, -pi, _2, "/", "sin", pi, _4, "/", "cos", "+", "|", "+", "*",
-                _0, "tan", pi, _3, "/", "cot", "+", "-", _4, "!", _3, "^", _7, "%", "+"
+                _5_3, _2, pi, "neg", _2, "/", "sin", pi, _4, "/", "cos", "+", "abs", "+", "*",
+                _0, "tan", pi, _3, "/", "cot", "+", "-", _4, "fact", _3, "pow", _7, "mod", "+"
             };
 
             BigNumber result =
