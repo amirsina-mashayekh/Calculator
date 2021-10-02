@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace BigNumbers
@@ -19,9 +20,9 @@ namespace BigNumbers
 
         public bool Sign { get; private set; }
 
-        public string IntegralPart { get; private set; }
+        public List<int> IntegralPart { get; private set; }
 
-        public string DecimalPart { get; private set; }
+        public List<int> DecimalPart { get; private set; }
 
         public string Value
         {
@@ -30,8 +31,8 @@ namespace BigNumbers
                 string val = "";
 
                 if (!Sign) { val += '-'; }
-                val += IntegralPart;
-                if (DecimalPart != "") { val += '.' + DecimalPart; }
+                val += string.Join(null, IntegralPart);
+                if (DecimalPart.Count != 0) { val += '.' + string.Join(null, DecimalPart); }
 
                 return val;
             }
@@ -43,26 +44,36 @@ namespace BigNumbers
                     throw new FormatException("String is not a rational number.");
                 }
 
+                IntegralPart = new List<int>();
+                DecimalPart = new List<int>();
                 Sign = value[0] != '-';
 
                 int pointIndex = value.IndexOf('.');
+                int len = value.Length;
+
                 if (pointIndex > -1)
                 {
-                    IntegralPart = value[(Sign ? 0 : 1)..pointIndex];
-                    DecimalPart = value[(pointIndex + 1)..];
+                    for (int i = Sign ? 0 : 1; i < pointIndex; i++)
+                    {
+                        IntegralPart.Add(value[i] - '0');
+                    }
+                    for (int i = pointIndex + 1; i < len; i++)
+                    {
+                        DecimalPart.Add(value[i] - '0');
+                    }
                 }
                 else
                 {
-                    IntegralPart = value[(Sign ? 0 : 1)..];
-                    DecimalPart = "";
+                    for (int i = Sign ? 0 : 1; i < len; i++)
+                    {
+                        IntegralPart.Add(value[i] - '0');
+                    }
                 }
 
-                IntegralPart = IntegralPart.TrimStart('0');
-                if (IntegralPart == "") { IntegralPart = "0"; }
+                if (IntegralPart.Count == 0) { IntegralPart.Add(0); }
 
-                DecimalPart = DecimalPart.TrimEnd('0');
-
-                if (IntegralPart == "0" && DecimalPart == "") { Sign = true; }
+                RemoveExtraZeroes();
+                if (IntegralPart[0] == 0 && DecimalPart.Count == 0) { Sign = true; }
             }
         }
 
@@ -73,18 +84,41 @@ namespace BigNumbers
 
         public BigNumber(decimal Value)
         {
-            if (System.Math.Truncate(Value) == Value)
+            IntegralPart = new List<int>();
+            DecimalPart = new List<int>();
+
+            decimal abs = Math.Abs(Value);
+            decimal i = Math.Truncate(abs);
+            decimal d = abs - i;
+
+            if (i == 0)
             {
-                IntegralPart = System.Math.Abs(Value).ToString(CultureInfo.InvariantCulture);
-                DecimalPart = "";
+                IntegralPart.Add(0);
             }
             else
             {
-                string[] str = System.Math.Abs(Value).ToString(CultureInfo.InvariantCulture).Split('.');
-                IntegralPart = str[0];
-                DecimalPart = str[1];
+                while (i >= 1)
+                {
+                    IntegralPart.Insert(0, (int)(i % 10));
+                    i /= 10;
+                }
+            }
+
+            while (d > 0)
+            {
+                d *= 10;
+                int digit = (int)d;
+                DecimalPart.Add(digit);
+                d -= digit;
             }
             Sign = Value >= 0;
+        }
+
+        private BigNumber()
+        {
+            Sign = true;
+            IntegralPart = new List<int>();
+            DecimalPart = new List<int>();
         }
 
         public override string ToString()
@@ -114,18 +148,18 @@ namespace BigNumbers
             }
 
             int result = 0;
-            string i0 = IntegralPart;
-            string d0 = DecimalPart;
-            string i1 = other.IntegralPart;
-            string d1 = other.DecimalPart;
+            List<int> i0 = new List<int>(IntegralPart);
+            List<int> d0 = new List<int>(DecimalPart);
+            List<int> i1 = new List<int>(other.IntegralPart);
+            List<int> d1 = new List<int>(other.DecimalPart);
 
             // Make lenght of numbers equal by adding non-significant 0s
-            while (i1.Length < i0.Length) { i1 = '0' + i1; }
-            while (i0.Length < i1.Length) { i0 = '0' + i0; }
-            while (d1.Length < d0.Length) { d1 += '0'; }
-            while (d0.Length < d1.Length) { d0 += '0'; }
+            while (i1.Count < i0.Count) { i1.Insert(0, 0); }
+            while (i0.Count < i1.Count) { i0.Insert(0, 0); }
+            while (d1.Count < d0.Count) { d1.Add(0); }
+            while (d0.Count < d1.Count) { d0.Add(0); }
 
-            for (int i = 0; i < i0.Length; i++)
+            for (int i = 0; i < i0.Count; i++)
             {
                 // No need to cast
                 if (i0[i] > i1[i]) { result = 1; }
@@ -134,7 +168,7 @@ namespace BigNumbers
             }
             if (result != 0) { return Sign ? result : -result; }
 
-            for (int i = 0; i < d0.Length; i++)
+            for (int i = 0; i < d0.Count; i++)
             {
                 // No need to cast
                 if (d0[i] > d1[i]) { result = 1; }
@@ -247,32 +281,42 @@ namespace BigNumbers
         public static BigNumber operator *(BigNumber n, BigNumber n1)
         {
             BigNumber result = zero.MemberwiseClone() as BigNumber;
-            string lnz = n.Abs().Value.Replace(".", "");
-            string mnz = n1.Abs().Value.Replace(".", "");
+            List<int> lnz = new List<int>(n.IntegralPart);
+            lnz.AddRange(n.DecimalPart);
+            List<int> mnz = new List<int>(n1.IntegralPart);
+            mnz.AddRange(n1.DecimalPart);
 
             // Put number with less non-zero characters in lnz
-            int nnz = lnz.Replace("0", "").Length;
-            int n1nz = mnz.Replace("0", "").Length;
+            int nnz = 0;
+            foreach (int digit in lnz)
+            {
+                if (digit != 0) nnz++;
+            }
+            int n1nz = 0;
+            foreach (int digit in mnz)
+            {
+                if (digit != 0) n1nz++;
+            }
             if (nnz > n1nz)
             {
-                string tmp = lnz;
+                List<int> tmp = new List<int>(lnz);
                 lnz = mnz;
                 mnz = tmp;
             }
 
-            int llen = lnz.Length;
-            int glen = mnz.Length;
+            int llen = lnz.Count;
+            int glen = mnz.Count;
             int carry = 0;
             for (int i = llen - 1; i >= 0; i--)
             {
-                if (lnz[i] == '0') { continue; }
+                if (lnz[i] == 0) { continue; }
 
-                string mul = "";
-                for (int j = 0; j < llen - 1 - i; j++) { mul += '0'; }
+                BigNumber mul = new BigNumber();
+                for (int j = 0; j < llen - 1 - i; j++) { mul.IntegralPart.Add(0); }
 
                 for (int j = glen - 1; j >= 0; j--)
                 {
-                    int m = ((mnz[j] - '0') * (lnz[i] - '0')) + carry;
+                    int m = (mnz[j] * lnz[i]) + carry;
                     if (m > 9)
                     {
                         carry = m / 10;
@@ -280,24 +324,28 @@ namespace BigNumbers
                     }
                     else { carry = 0; }
 
-                    mul = m.ToString() + mul;
+                    mul.IntegralPart.Insert(0, m);
                 }
                 if (carry > 0)
                 {
-                    mul = carry.ToString() + mul;
+                    mul.IntegralPart.Insert(0, carry);
                     carry = 0;
                 }
 
-                result += new BigNumber(mul);
+                result += mul;
             }
 
-            int decimalPoints = n.DecimalPart.Length + n1.DecimalPart.Length;
-            while (decimalPoints >= result.IntegralPart.Length)
+            int decimalPlaces = n.DecimalPart.Count + n1.DecimalPart.Count;
+            while (decimalPlaces >= result.IntegralPart.Count)
             {
                 // Add 0s before number to be able to insert decimal point
-                result.IntegralPart = '0' + result.IntegralPart;
+                result.IntegralPart.Insert(0, 0);
             }
-            result = new BigNumber(result.IntegralPart.Insert(result.IntegralPart.Length - decimalPoints, "."));
+            int integralPlacess = result.IntegralPart.Count - decimalPlaces;
+
+            result.DecimalPart = result.IntegralPart.GetRange(integralPlacess, decimalPlaces);
+            result.IntegralPart = result.IntegralPart.GetRange(0, integralPlacess);
+            result.RemoveExtraZeroes();
             return (n.Sign ^ n1.Sign) ? -result : result;
         }
 
@@ -308,7 +356,7 @@ namespace BigNumbers
 
         public static BigNumber operator %(BigNumber n, BigNumber n1)
         {
-            if (n.DecimalPart != "" || n1.DecimalPart != "")
+            if (n.DecimalPart.Count != 0 || n1.DecimalPart.Count != 0)
             {
                 throw new ArithmeticException("Modulus division is only available for integers.");
             }
@@ -322,7 +370,7 @@ namespace BigNumbers
         /// <returns>A bigNumber.</returns>
         public BigNumber Abs()
         {
-            return Sign ? this : -this;
+            return Sign ? MemberwiseClone() as BigNumber : -this;
         }
 
         /// <summary>
@@ -333,49 +381,49 @@ namespace BigNumbers
         /// <returns>Sum of absolute values of <c>n</c> and <c>n1</c>.</returns>
         private static BigNumber AbsSum(BigNumber n, BigNumber n1)
         {
-            string i0 = n.IntegralPart;
-            string d0 = n.DecimalPart;
-            string i1 = n1.IntegralPart;
-            string d1 = n1.DecimalPart;
+            BigNumber result = new BigNumber();
+            List<int> i0 = new List<int>(n.IntegralPart);
+            List<int> d0 = new List<int>(n.DecimalPart);
+            List<int> i1 = new List<int>(n1.IntegralPart);
+            List<int> d1 = new List<int>(n1.DecimalPart);
 
             // Make lenght of numbers equal by adding non-significant 0s
-            while (i1.Length < i0.Length) { i1 = '0' + i1; }
-            while (i0.Length < i1.Length) { i0 = '0' + i0; }
-            while (d1.Length < d0.Length) { d1 += '0'; }
-            while (d0.Length < d1.Length) { d0 += '0'; }
+            while (i1.Count < i0.Count) { i1.Insert(0, 0); }
+            while (i0.Count < i1.Count) { i0.Insert(0, 0); }
+            while (d1.Count < d0.Count) { d1.Add(0); }
+            while (d0.Count < d1.Count) { d0.Add(0); }
 
-            string rd = "";
             int carry = 0;
-            int dlen = d0.Length;
+            int dlen = d0.Count;
             for (int i = dlen - 1; i >= 0; i--)
             {
-                int sum = d0[i] - '0' + d1[i] - '0' + carry;
+                int sum = d0[i] + d1[i] + carry;
                 if (sum > 9)
                 {
                     sum -= 10;
                     carry = 1;
                 }
                 else { carry = 0; }
-                rd = sum.ToString() + rd;
+                result.DecimalPart.Insert(0, sum);
             }
 
-            string ri = "";
-            int ilen = i0.Length;
+            int ilen = i0.Count;
             for (int i = ilen - 1; i >= 0; i--)
             {
-                int sum = i0[i] - '0' + i1[i] - '0' + carry;
+                int sum = i0[i] + i1[i] + carry;
                 if (sum > 9)
                 {
                     sum -= 10;
                     carry = 1;
                 }
                 else { carry = 0; }
-                ri = sum.ToString() + ri;
+                result.IntegralPart.Insert(0, sum);
             }
 
-            if (carry == 1) { ri = '1' + ri; }
+            if (carry == 1) { result.IntegralPart.Insert(0, 1); }
 
-            return new BigNumber(ri + '.' + rd);
+            result.RemoveExtraZeroes();
+            return result;
         }
 
         /// <summary>
@@ -386,61 +434,61 @@ namespace BigNumbers
         /// <returns>Difference of absolute values of <c>n</c> and <c>n1</c>.</returns>
         private static BigNumber AbsDif(BigNumber n, BigNumber n1)
         {
-            string i0;
-            string d0;
-            string i1;
-            string d1;
+            BigNumber result = new BigNumber();
+            List<int> i0;
+            List<int> d0;
+            List<int> i1;
+            List<int> d1;
 
             // Put greater number in x0
             if (n.Abs() > n1.Abs())
             {
-                i0 = n.IntegralPart;
-                d0 = n.DecimalPart;
-                i1 = n1.IntegralPart;
-                d1 = n1.DecimalPart;
+                i0 = new List<int>(n.IntegralPart);
+                d0 = new List<int>(n.DecimalPart);
+                i1 = new List<int>(n1.IntegralPart);
+                d1 = new List<int>(n1.DecimalPart);
             }
             else
             {
-                i0 = n1.IntegralPart;
-                d0 = n1.DecimalPart;
-                i1 = n.IntegralPart;
-                d1 = n.DecimalPart;
+                i0 = new List<int>(n1.IntegralPart);
+                d0 = new List<int>(n1.DecimalPart);
+                i1 = new List<int>(n.IntegralPart);
+                d1 = new List<int>(n.DecimalPart);
             }
 
             // Make lenght of numbers equal by adding non-significant 0s
-            while (i1.Length < i0.Length) { i1 = '0' + i1; }
-            while (i0.Length < i1.Length) { i0 = '0' + i0; }
-            while (d1.Length < d0.Length) { d1 += '0'; }
-            while (d0.Length < d1.Length) { d0 += '0'; }
+            while (i1.Count < i0.Count) { i1.Insert(0, 0); }
+            while (i0.Count < i1.Count) { i0.Insert(0, 0); }
+            while (d1.Count < d0.Count) { d1.Add(0); }
+            while (d0.Count < d1.Count) { d0.Add(0); }
 
-            string rd = "";
             int carry = 0;
-            for (int i = d0.Length - 1; i >= 0; i--)
+            for (int i = d0.Count - 1; i >= 0; i--)
             {
-                int dif = d0[i] - '0' - (d1[i] - '0') - carry;
+                int dif = d0[i] - d1[i] - carry;
                 if (dif < 0)
                 {
                     dif += 10;
                     carry = 1;
                 }
                 else { carry = 0; }
-                rd = dif.ToString() + rd;
+                result.DecimalPart.Insert(0, dif);
             }
 
-            string ri = "";
-            for (int i = i0.Length - 1; i >= 0; i--)
+            for (int i = i0.Count - 1; i >= 0; i--)
             {
-                int dif = i0[i] - '0' - (i1[i] - '0') - carry;
+                int dif = i0[i] - i1[i] - carry;
                 if (dif < 0)
                 {
                     dif += 10;
                     carry = 1;
                 }
                 else { carry = 0; }
-                ri = dif.ToString() + ri;
+                result.IntegralPart.Insert(0, dif);
             }
 
-            return new BigNumber(ri + '.' + rd);
+            result.RemoveExtraZeroes();
+            return result;
         }
 
         /// <summary>
@@ -456,20 +504,23 @@ namespace BigNumbers
 
             BigNumber divisioned = (n.MemberwiseClone() as BigNumber).Abs();
             BigNumber divisor = (n1.MemberwiseClone() as BigNumber).Abs();
+            BigNumber result = new BigNumber();
 
             // Get rid of decimals
-            while (divisor.DecimalPart.Length > 0 || divisioned.DecimalPart.Length > 0)
+            while (divisor.DecimalPart.Count > 0 || divisioned.DecimalPart.Count > 0)
             {
                 divisioned *= ten;
                 divisor *= ten;
             }
 
-            string ri = "";
-            int divLen = divisor.IntegralPart.Length;
             BigNumber rem = zero.MemberwiseClone() as BigNumber;
-            while (divisioned.IntegralPart.Length > 0 || divisioned > divisor)
+            while (divisioned.IntegralPart.Count > 0 || divisioned > divisor)
             {
-                BigNumber tempDiv = new BigNumber(rem.IntegralPart + divisioned.IntegralPart[0]);
+                BigNumber tempDiv = new BigNumber()
+                {
+                    IntegralPart = new List<int>(rem.IntegralPart)
+                };
+                tempDiv.IntegralPart.Add(divisioned.IntegralPart[0]);
 
                 BigNumber tmp = new BigNumber(9);
                 BigNumber mul;
@@ -480,24 +531,37 @@ namespace BigNumbers
                     mul = divisor * tmp;
                     if (mul <= tempDiv) { break; }
                     i--;
-                    tmp.IntegralPart = i.ToString();
+                    tmp.IntegralPart[0] = i;
                 } while (true);
 
-                ri += i.ToString();
+                result.IntegralPart.Add(i);
 
                 rem = tempDiv - mul;
-                divisioned.IntegralPart = divisioned.IntegralPart[1..];
+                divisioned.IntegralPart = divisioned.IntegralPart.GetRange(1, divisioned.IntegralPart.Count - 1);
             }
 
-            bool sign = n.Sign ^ n1.Sign;
-            if (n.DecimalPart == "" || n1.DecimalPart == "")
+            bool sign = !(n.Sign ^ n1.Sign);
+            if (n.DecimalPart.Count == 0 || n1.DecimalPart.Count == 0)
             {
-                if (sign) { rem = divisor - rem; }
+                if (!sign) { rem = divisor - rem; }
                 remainder = n1.Sign ? rem : -rem;
             }
             else { remainder = null; }
 
-            return new BigNumber((sign ? "-" : "") + ri);
+            result.RemoveExtraZeroes();
+            return sign ? result : -result;
+        }
+
+        private void RemoveExtraZeroes()
+        {
+            while (IntegralPart[0] == 0 && IntegralPart.Count > 1)
+            {
+                IntegralPart.RemoveAt(0);
+            }
+            while (DecimalPart.Count > 0 && DecimalPart[^1] == 0)
+            {
+                DecimalPart.RemoveAt(DecimalPart.Count - 1);
+            }
         }
     }
 }

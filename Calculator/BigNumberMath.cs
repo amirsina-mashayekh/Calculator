@@ -44,7 +44,7 @@ namespace BigNumbers
 
         public static BigNumber Factorial(BigNumber n)
         {
-            if (!n.Sign || n.DecimalPart != "")
+            if (!n.Sign || n.DecimalPart.Count != 0)
             {
                 throw new ArithmeticException("Factorial is only supported for zero and positive integers.");
             }
@@ -61,7 +61,7 @@ namespace BigNumbers
 
         public static BigNumber Exponent(BigNumber n, BigNumber n1)
         {
-            if (n1.DecimalPart != "")
+            if (n1.DecimalPart.Count != 0)
             {
                 throw new ArithmeticException("Decimal power is not supported yet.");
             }
@@ -92,7 +92,7 @@ namespace BigNumbers
         {
             // Cosinus taylor calculation is faster so we calculate
             // cosinus of complement of n which is equal to sinus of n.
-            return Cosinus(new BigNumber((decimal)System.Math.PI / 2) - n);
+            return Cosinus(new BigNumber((decimal)Math.PI / 2) - n);
         }
 
         public static BigNumber Cosinus(BigNumber n)
@@ -115,7 +115,7 @@ namespace BigNumbers
                 f *= 2 * i * ((2 * i) - 1);
             }
 
-            cos = System.Math.Round(cos, 3);
+            cos = Math.Round(cos, 3);
 
             return new BigNumber((decimal)cos);
         }
