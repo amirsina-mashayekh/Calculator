@@ -7,38 +7,38 @@ namespace Calculator
 {
     public static class Evaluator
     {
-        private class Operator
+        public class Operator
         {
-            public string Token { get; }
-            public int Precedence { get; }
             public Func<BigNumber, BigNumber,BigNumber> Operate { get; }
+            public int Precedence { get; }
             public bool Unary { get; }
 
-            public Operator(string token, int precedence, Func<BigNumber, BigNumber, BigNumber> operate, bool twoOperands)
+            public Operator(Func<BigNumber, BigNumber, BigNumber> operate, int precedence, bool twoOperands)
             {
-                Token = token ?? throw new ArgumentNullException(nameof(token));
-                Precedence = precedence;
                 Operate = operate ?? throw new ArgumentNullException(nameof(operate));
+                Precedence = precedence;
                 Unary = twoOperands;
             }
         }
 
-        private static readonly Operator[] Operators =
+        public static readonly Dictionary<string, Operator> operators = new Dictionary<string, Operator>
         {
-            new Operator("+", 0, (n, n1) => n + n1, false),
-            new Operator("-", 0, (n, n1) => n - n1, false),
-            new Operator("*", 0, (n, n1) => n * n1, false),
-            new Operator("/", 0, (n, n1) => DivideWithDecimals(n, n1), false),
-            new Operator("mod", 0, (n, n1) => n % n1, false),
-            new Operator("pow", 0, (n, n1) => Exponent(n, n1), false),
-            new Operator("pos", 0, (n, n1) => n, true),
-            new Operator("neg", 0, (n, n1) => -n, true),
-            new Operator("abs", 0, (n, n1) => n.Abs(), true),
-            new Operator("fact", 0, (n, n1) => Factorial(n), true),
-            new Operator("sin", 0, (n, n1) => Sinus(n), true),
-            new Operator("cos", 0, (n, n1) => Cosinus(n), true),
-            new Operator("tan", 0, (n, n1) => Tangent(n), true),
-            new Operator("cot", 0, (n, n1) => Cotangent(n), true)
+            { "(", new Operator((n, n1) => null, 0, false) },
+            { ")", new Operator((n, n1) => null, 0, false) },
+            { "+", new Operator((n, n1) => n + n1, 3, false) },
+            { "-", new Operator((n, n1) => n - n1, 3, false) },
+            { "*", new Operator((n, n1) => n * n1, 2, false) },
+            { "/", new Operator((n, n1) => DivideWithDecimals(n, n1), 2, false) },
+            { "mod", new Operator((n, n1) => n % n1, 2, false) },
+            { "pow", new Operator((n, n1) => Exponent(n, n1), 1, false) },
+            { "pos", new Operator((n, n1) => n, 2, true) },
+            { "neg", new Operator((n, n1) => -n, 2, true) },
+            { "abs", new Operator((n, n1) => n.Abs(), 0, true) },
+            { "fact", new Operator((n, n1) => Factorial(n), 0, true) },
+            { "sin", new Operator((n, n1) => Sinus(n), 0, true) },
+            { "cos", new Operator((n, n1) => Cosinus(n), 0, true) },
+            { "tan", new Operator((n, n1) => Tangent(n), 0, true) },
+            { "cot", new Operator((n, n1) => Cotangent(n), 0, true) }
         };
 
         /// <summary>
@@ -57,9 +57,9 @@ namespace Calculator
                 {
                     stack.Push(token as BigNumber);
                 }
-                else if (token is string)
+                else if (token is Operator)
                 {
-                    stack.Push(Operate(token as string, stack));
+                    stack.Push(Operate(token as Operator, stack));
                 }
                 else
                 {
@@ -76,26 +76,71 @@ namespace Calculator
         /// <param name="op">The operator to be applied.</param>
         /// <param name="stack">The stack of <c>BigNumber</c>s.</param>
         /// <returns>A <c>BigNumber</c> showing the result of operation.</returns>
-        private static BigNumber Operate(string op, Stack<BigNumber> stack)
+        private static BigNumber Operate(Operator op, Stack<BigNumber> stack)
         {
             BigNumber num = stack.Pop();
 
-            foreach (Operator o in Operators)
+            if (op.Unary)
             {
-                if (o.Token == op)
+                return op.Operate(num, null);
+            }
+            else
+            {
+                return op.Operate(stack.Pop(), num);
+            }
+        }
+
+        /// <summary>
+        /// Converts an infix expression to Reverse Polish notation expression.
+        /// </summary>
+        /// <param name="infix">An array of operators and <c>BigNumber</c>s in infix order.</param>
+        /// <returns>
+        /// An array of operators and <c>BigNumber</c>s
+        /// which is RPN equivalent for <c>infix</c>.
+        /// </returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static object[] InfixtoRPN(object[] infix)
+        {
+            Stack<Operator> ops = new Stack<Operator>();
+            List<object> rpn = new List<object>();
+
+            foreach (object token in infix)
+            {
+                if (token is BigNumber)
                 {
-                    if (o.Unary)
+                    rpn.Add(token);
+                }
+                else if (token is Operator)
+                {
+                    Operator t = token as Operator;
+                    if (t == operators["("])
                     {
-                        return o.Operate(num, null);
+                        ops.Push(t);
+                    }
+                    else if (t == operators[")"])
+                    {
+                        while (ops.Peek() != operators["("])
+                        {
+                            rpn.Add(ops.Pop());
+                        }
+                        _ = ops.Pop();
                     }
                     else
                     {
-                        return o.Operate(stack.Pop(), num);
+                        
                     }
                 }
+                else
+                {
+                    throw new ArgumentException("Invalid token in RPN expression.");
+                }
             }
+            throw new NotImplementedException();
+        }
 
-            throw new ArgumentException("Invalid operator: " + op);
+        private static bool UnwindOperators(Stack<string> ops, Operator nextToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }
