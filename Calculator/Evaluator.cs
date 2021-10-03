@@ -169,5 +169,90 @@ namespace Calculator
 
             return ops.Peek().Precedence <= nextToken.Precedence;
         }
+
+        private enum TokenType { space, number, symbolOperator, stringOperator }
+
+        /// <summary>
+        /// Converts an infix expression string to an array of tokens.
+        /// </summary>
+        /// <param name="expression">The infix expression.</param>
+        /// <returns>An array of tokens.</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static object[] Tokenize(string expression)
+        {
+            List<object> infix = new List<object>();
+            TokenType lastTokenType = TokenType.space;
+            string tmpToken = "";
+            expression += " ";      // To add the last token
+
+            foreach (char c in expression)
+            {
+                TokenType currentTokenType;
+                if (c == ' ') { currentTokenType = TokenType.space; }
+                else if ((c >= '0' && c <= '9') || c == '.') { currentTokenType = TokenType.number; }
+                else if (c >= 'a' && c <= 'z') { currentTokenType = TokenType.stringOperator; }
+                else { currentTokenType = TokenType.symbolOperator; }
+
+                if (currentTokenType != lastTokenType || currentTokenType == TokenType.symbolOperator && tmpToken.Length > 0)
+                {
+                    switch (lastTokenType)
+                    {
+                        case TokenType.space:
+                            break;
+
+                        case TokenType.number:
+                            try
+                            {
+                                infix.Add(new BigNumber(tmpToken));
+                            }
+                            catch (FormatException)
+                            {
+                                throw new FormatException("Bad number format: " + tmpToken);
+                            }
+                            break;
+
+                        case TokenType.symbolOperator:
+                        case TokenType.stringOperator:
+                            try
+                            {
+                                if (tmpToken == "+")
+                                {
+                                    object prevToken = infix[^1];
+
+                                    if (!(prevToken is BigNumber || prevToken == operators[")"]))
+                                    {
+                                        tmpToken = "pos";
+                                    }
+                                }
+                                else if (tmpToken == "-")
+                                {
+                                    object prevToken = infix[^1];
+
+                                    if (!(prevToken is BigNumber || prevToken == operators[")"]))
+                                    {
+                                        tmpToken = "neg";
+                                    }
+                                }
+
+                                infix.Add(operators[tmpToken]);
+                            }
+                            catch (KeyNotFoundException)
+                            {
+                                throw new FormatException("Bad operator: " + tmpToken);
+                            }
+                            break;
+
+                        default:
+                            // Should not get here at all, but just in case...
+                            throw new Exception("Invalid lastToken value.");
+                    }
+                    tmpToken = "";
+                }
+
+                tmpToken += c;
+                lastTokenType = currentTokenType;
+            }
+            return infix.ToArray();
+        }
     }
 }
