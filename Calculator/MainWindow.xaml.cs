@@ -94,7 +94,7 @@ namespace Calculator
 
         private void Absolute_Click(object sender, RoutedEventArgs e)
         {
-            InsertInput("||", -1);
+            InsertInput("abs()", -1);
         }
 
         private void Equals_Click(object sender, RoutedEventArgs e)
@@ -156,7 +156,7 @@ namespace Calculator
 
         private void ButtonsGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            inputBox.Focus();
+            _ = inputBox.Focus();
         }
     }
 }

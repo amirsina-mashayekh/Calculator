@@ -71,7 +71,7 @@
             <Button Style="{StaticResource GeneralButtons}" x:Name="leftParenthesis" Content="(" Grid.Row="1" Grid.Column="2" Click="SelfInsert_Click" />
             <Button Style="{StaticResource GeneralButtons}" x:Name="rightParenthesis" Content=")" Grid.Row="1" Grid.Column="3" Click="SelfInsert_Click" />
             <Button Style="{StaticResource GeneralButtons}" x:Name="integral" Content="&#x222B;" Grid.Row="2" Grid.Column="3" Click="Integral_Click" />
-            <Button Style="{StaticResource GeneralButtons}" x:Name="modulo" Content="mod" Grid.Row="2" Grid.Column="4" Click="FunctionButtons_Click" />
+            <Button Style="{StaticResource GeneralButtons}" x:Name="modulo" Content="mod" Grid.Row="2" Grid.Column="4" Click="SelfInsert_Click" />
             <Button Style="{StaticResource SymbolButtons}" x:Name="xLetter" Content="x" Grid.Row="3" Grid.Column="0" Click="SelfInsert_Click" />
             <Button Style="{StaticResource SymbolButtons}" x:Name="power" Content="x&#x02B8;" Grid.Row="4" Grid.Column="0" Click="Power_Click" />
             <Button Style="{StaticResource SymbolButtons}" x:Name="factorial" Content="x!" Grid.Row="5" Grid.Column="0" Click="Factorial_Click" />
