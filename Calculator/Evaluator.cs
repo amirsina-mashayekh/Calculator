@@ -234,6 +234,13 @@ namespace Calculator
                                     }
                                 }
 
+                                if (tmpToken == "("
+                                    && lastTokenType != TokenType.symbolOperator
+                                    && lastTokenType != TokenType.stringOperator)
+                                {
+                                    infix.Add(operators["*"]);
+                                }
+
                                 infix.Add(operators[tmpToken]);
                             }
                             catch (KeyNotFoundException)

@@ -10,6 +10,7 @@ namespace Calculator.Tests
     [TestClass()]
     public class EvaluatorTests
     {
+        // 5.3 * (2 + abs(sin(-π/2) + cos(π/4))) - (tan(0) + cot(π/3)) + fact(4) ^ 3 % 7
         private static readonly string expression =
             "5.3 * (2 + abs(sin(-3.1415926535897931/2) + cos(3.1415926535897931/4))) " +
             "- (tan(0) + cot(3.1415926535897931/3)) + fact(4) pow 3 mod 7";

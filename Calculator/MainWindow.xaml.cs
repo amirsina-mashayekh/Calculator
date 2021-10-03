@@ -1,4 +1,5 @@
 ﻿using BigNumbers;
+using static Calculator.Evaluator;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -89,7 +90,7 @@ namespace Calculator
 
         private void Factorial_Click(object sender, RoutedEventArgs e)
         {
-            InsertInput("!");
+            InsertInput("fact()", -1);
         }
 
         private void Absolute_Click(object sender, RoutedEventArgs e)
@@ -99,8 +100,31 @@ namespace Calculator
 
         private void Equals_Click(object sender, RoutedEventArgs e)
         {
-            resultBox.Foreground = Brushes.White;
-            resultBox.Text = "123.456";
+            if (inputBox.Foreground == disabledColor) { return; }
+            string expression = inputBox.Text
+                .ToLowerInvariant()
+                .Replace("^", "pow")
+                .Replace("%", "mod")
+                .Replace("\u03C0", Math.PI.ToString())
+                .Replace("\u00D7", "*")
+                .Replace("\u2212", "-")
+                .Replace("\u00F7", "/")
+                .Replace("\u222B", "integral");
+            try
+            {
+                resultBox.Text = EvaluateRPN(InfixToRPN(Tokenize(expression))).Value;
+                resultBox.Foreground = Brushes.LightGreen;
+            }
+            catch (ArgumentException ex)
+            {
+                resultBox.Foreground = Brushes.White;
+                resultBox.Text = "Error: " + ex.Message;
+            }
+            catch (Exception)
+            {
+                resultBox.Foreground = Brushes.White;
+                resultBox.Text = "Error: Invalid expression.";
+            }
         }
 
         private void Backspace_Click(object sender, RoutedEventArgs e)

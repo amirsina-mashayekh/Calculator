@@ -66,7 +66,7 @@
             <Button Style="{StaticResource GeneralButtons}" x:Name="plus" Content="+" Grid.Row="6" Grid.Column="4" Click="SelfInsert_Click" />
             <Button Style="{StaticResource GeneralButtons}" x:Name="minus" Content="&#x2212;" Grid.Row="5" Grid.Column="4" Click="SelfInsert_Click" />
             <Button Style="{StaticResource GeneralButtons}" x:Name="multiply" Content="&#x00D7;" Grid.Row="4" Grid.Column="4" Click="SelfInsert_Click" />
-            <Button Style="{StaticResource GeneralButtons}" x:Name="divide" Content="/" Grid.Row="3" Grid.Column="4" Click="SelfInsert_Click" />
+            <Button Style="{StaticResource GeneralButtons}" x:Name="divide" Content="&#x00F7;" Grid.Row="3" Grid.Column="4" Click="SelfInsert_Click" />
             <Button Style="{StaticResource EqualsButton}" x:Name="equals" Content="=" Grid.Row="6" Grid.Column="3" Click="Equals_Click" />
             <Button Style="{StaticResource GeneralButtons}" x:Name="leftParenthesis" Content="(" Grid.Row="1" Grid.Column="2" Click="SelfInsert_Click" />
             <Button Style="{StaticResource GeneralButtons}" x:Name="rightParenthesis" Content=")" Grid.Row="1" Grid.Column="3" Click="SelfInsert_Click" />
