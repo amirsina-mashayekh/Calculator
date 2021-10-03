@@ -97,7 +97,7 @@ namespace BigNumbers
 
         public static BigNumber Cosinus(BigNumber n)
         {
-            double num = (double)(n - (n / twoPi * twoPi)).ToDecimal();
+            double num = (double)(n % twoPi).ToDecimal();
             double cos = 1;
 
             double mul = num * num;

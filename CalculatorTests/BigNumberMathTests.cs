@@ -98,7 +98,7 @@ namespace BigNumbers.Tests
             Assert.AreEqual("-1", Sinus(new BigNumber(-pi / 2)).Value);
 
             Assert.AreEqual("0.866", Sinus(new BigNumber(pi / 3)).Value);
-            Assert.AreEqual("0.707", Sinus(new BigNumber(pi / 4)).Value);
+            Assert.AreEqual("-0.707", Sinus(new BigNumber(-pi / 4)).Value);
             Assert.AreEqual("0.5", Sinus(new BigNumber(pi / 6)).Value);
         }
 

@@ -291,7 +291,11 @@ namespace BigNumbers.Tests
                 { "25", "6", "1" },
                 { "25", "-6", "-5" },
                 { "-25", "6", "5" },
-                { "-25", "-6", "-1" }
+                { "-25", "-6", "-1" },
+                { "25.7", "5.1", "0.2" },
+                { "25.7", "-5.1", "-4.9" },
+                { "-25.7", "5.1", "4.9" },
+                { "-25.7", "-5.1", "-0.2" }
             };
 
             for (int i = 0; i < tests.GetLength(0); i++)
@@ -303,9 +307,6 @@ namespace BigNumbers.Tests
             }
 
             _ = Assert.ThrowsException<DivideByZeroException>(() => new BigNumber(1) % new BigNumber(0));
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1));
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1) % new BigNumber(1.1M));
-            _ = Assert.ThrowsException<ArithmeticException>(() => new BigNumber(1.1M) % new BigNumber(1.1M));
         }
 
         [TestMethod()]

@@ -356,11 +356,22 @@ namespace BigNumbers
 
         public static BigNumber operator %(BigNumber n, BigNumber n1)
         {
-            if (n.DecimalPart.Count != 0 || n1.DecimalPart.Count != 0)
-            {
-                throw new ArithmeticException("Modulus division is only available for integers.");
-            }
             _ = DivideAndRemainder(n, n1, out BigNumber result);
+
+            int ndc = n.DecimalPart.Count;
+            int n1dc = n1.DecimalPart.Count;
+            int decimalPlaces = ndc > n1dc ? ndc : n1dc;
+            while (decimalPlaces >= result.IntegralPart.Count)
+            {
+                // Add 0s before number to be able to insert decimal point
+                result.IntegralPart.Insert(0, 0);
+            }
+            int integralPlacess = result.IntegralPart.Count - decimalPlaces;
+
+            result.DecimalPart = result.IntegralPart.GetRange(integralPlacess, decimalPlaces);
+            result.IntegralPart = result.IntegralPart.GetRange(0, integralPlacess);
+            result.RemoveExtraZeroes();
+
             return result;
         }
 
@@ -541,17 +552,17 @@ namespace BigNumbers
             }
 
             bool sign = !(n.Sign ^ n1.Sign);
-            if (n.DecimalPart.Count == 0 || n1.DecimalPart.Count == 0)
-            {
-                if (!sign) { rem = divisor - rem; }
-                remainder = n1.Sign ? rem : -rem;
-            }
-            else { remainder = null; }
+
+            if (!sign) { rem = divisor - rem; }
+            remainder = n1.Sign ? rem : -rem;
 
             result.RemoveExtraZeroes();
             return sign ? result : -result;
         }
 
+        /// <summary>
+        /// Removes extra zeroes (before integal and after decimal places).
+        /// </summary>
         private void RemoveExtraZeroes()
         {
             while (IntegralPart[0] == 0 && IntegralPart.Count > 1)
