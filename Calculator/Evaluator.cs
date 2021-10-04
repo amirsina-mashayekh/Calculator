@@ -212,18 +212,20 @@ namespace Evaluation
                             {
                                 if (tmpToken == "+")
                                 {
-                                    object prevToken = infix[^1];
+                                    object prevToken =
+                                        infix.Count > 0 ? infix[^1] : null;
 
-                                    if (!(prevToken is BigNumber || prevToken == operators[")"]))
+                                    if (!(prevToken is BigNumber || prevToken == operators[")"]) || prevToken == null)
                                     {
                                         tmpToken = "pos";
                                     }
                                 }
                                 else if (tmpToken == "-")
                                 {
-                                    object prevToken = infix[^1];
+                                    object prevToken =
+                                        infix.Count > 0 ? infix[^1] : null;
 
-                                    if (!(prevToken is BigNumber || prevToken == operators[")"]))
+                                    if (!(prevToken is BigNumber || prevToken == operators[")"]) || prevToken == null)
                                     {
                                         tmpToken = "neg";
                                     }
