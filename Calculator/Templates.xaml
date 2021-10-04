@@ -92,7 +92,6 @@
 
     <Style x:Key="SymbolButtons" TargetType="Button" BasedOn="{StaticResource GeneralButtons}">
         <Setter Property="TextElement.FontFamily" Value="Times New Roman" />
-        <Setter Property="TextElement.FontStyle" Value="Italic" />
     </Style>
 
     <Style x:Key="TextBoxesStyle" TargetType="{x:Type TextBox}">
