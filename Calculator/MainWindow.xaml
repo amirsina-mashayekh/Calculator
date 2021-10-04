@@ -81,6 +81,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="5*" />
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -88,21 +89,22 @@
             
             <Canvas Grid.Row="0" HorizontalAlignment="Center" Width="135" Height="160">
                 <TextBlock Text="&#x222B;" Foreground="White" FontSize="100" FontFamily="Segoe UI"/>
-                <TextBox Style="{StaticResource IntegralBoundsStyle}" x:Name="upperBound" Canvas.Left="50" Canvas.Top="25" />
-                <TextBox Style="{StaticResource IntegralBoundsStyle}" x:Name="lowerBound" Canvas.Left="35" Canvas.Top="115" />
+                <TextBox Style="{StaticResource IntegralInputsStyle}" x:Name="upperBound" Canvas.Left="50" Canvas.Top="25" />
+                <TextBox Style="{StaticResource IntegralInputsStyle}" x:Name="lowerBound" Canvas.Left="35" Canvas.Top="115" />
             </Canvas>
 
             <Button Style="{StaticResource GeneralButtons}" x:Name="addExponent" Grid.Row="1" Content="Add Exponent" BorderThickness="3" Click="AddExponent_Click" />
+            <Button Style="{StaticResource GeneralButtons}" x:Name="removeExponent" Grid.Row="2" Content="Remove Last Exponent" BorderThickness="3" Click="RemoveExponent_Click" />
 
-            <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Margin="3">
+            <Border Grid.Row="3" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Margin="3">
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                     <StackPanel x:Name="polynomial" Orientation="Vertical" Margin="3">
                     </StackPanel>
                 </ScrollViewer>
             </Border>
 
-            <Button Style="{StaticResource EqualsButton}" x:Name="calculateIntegral" Grid.Row="3" Content="Calculate" BorderThickness="3" />
-            <Button Style="{StaticResource GeneralButtons}" x:Name="backToKeypad" Grid.Row="4" Content="Keypad" BorderThickness="3" Click="BackToKeypad_Click" />
+            <Button Style="{StaticResource EqualsButton}" x:Name="calculateIntegral" Grid.Row="4" Content="Calculate" BorderThickness="3" />
+            <Button Style="{StaticResource GeneralButtons}" x:Name="backToKeypad" Grid.Row="5" Content="Keypad" BorderThickness="3" Click="BackToKeypad_Click" />
         </Grid>
     </Grid>
 </Window>

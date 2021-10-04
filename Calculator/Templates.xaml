@@ -122,7 +122,7 @@
         </Style.Resources>
     </Style>
 
-    <Style x:Key="IntegralBoundsStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxesStyle}">
+    <Style x:Key="IntegralInputsStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxesStyle}">
         <Setter Property="Width" Value="75" />
         <Setter Property="Height" Value="25" />
         <Setter Property="Background" Value="#FF323130" />

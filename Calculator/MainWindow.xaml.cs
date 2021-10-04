@@ -17,11 +17,14 @@ namespace Calculator
 
         private readonly string piString = Math.PI.ToString();
 
+        private readonly GridLength inputHeight;
+
         private BigNumber memory;
 
         public MainWindow()
         {
             InitializeComponent();
+            inputHeight = inputRow.Height;
         }
 
         private void ResetResultBox()
@@ -92,9 +95,12 @@ namespace Calculator
         private void BackToKeypad_Click(object sender, RoutedEventArgs e)
         {
             inputBox.IsEnabled = true;
-            inputRow.Height = new GridLength(2, GridUnitType.Star);
-            buttonsGrid.Visibility = Visibility.Visible;
+            inputRow.Height = inputHeight;
             integralGrid.Visibility = Visibility.Collapsed;
+            buttonsGrid.Visibility = Visibility.Visible;
+            polynomial.Children.Clear();
+            upperBound.Clear();
+            lowerBound.Clear();
         }
 
         private void Power_Click(object sender, RoutedEventArgs e)
@@ -223,7 +229,7 @@ namespace Calculator
             TextBox input = new TextBox()
             {
                 Name = "exp" + exp.ToString(),
-                Style = FindResource("IntegralBoundsStyle") as Style,
+                Style = FindResource("IntegralInputsStyle") as Style,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Width = 75,
                 FontSize = 18
@@ -257,6 +263,17 @@ namespace Calculator
             }
 
             polynomial.Children.Add(grid);
+        }
+
+        private void RemoveExponent_Click(object sender, RoutedEventArgs e)
+        {
+            int cnt = polynomial.Children.Count;
+
+            if (cnt == 0) { return; }
+
+            polynomial.Children.RemoveAt(--cnt);
+
+            if (cnt > 0) { polynomial.Children.RemoveAt(--cnt); }
         }
     }
 }
