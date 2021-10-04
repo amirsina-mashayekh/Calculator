@@ -255,17 +255,18 @@ namespace BigNumbers
 
         public static BigNumber operator -(BigNumber n, BigNumber n1)
         {
-            BigNumber rv;
-            bool rs = true;
+            BigNumber result;
 
-            rv = n.Sign == n1.Sign ? AbsDif(n, n1) : AbsSum(n, n1);
+            result = n.Sign == n1.Sign ? AbsDif(n, n1) : AbsSum(n, n1);
 
-            if ((!n.Sign && n.Abs() > n1.Abs()) || (n1.Sign && n1.Abs() > n.Abs()))
+            if ((!n.Sign && n1.Sign)
+                || (!n.Sign && !n1.Sign && n.Abs() > n1.Abs())
+                || (n.Sign && n1.Sign && n1.Abs() > n.Abs()))
             {
-                rs = false;
+                result.Sign = false;
             }
 
-            return rs ? rv : -rv;
+            return result;
         }
 
         public static BigNumber operator ++(BigNumber n)
