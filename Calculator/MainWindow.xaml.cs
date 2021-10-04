@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Documents;
 
 namespace Calculator
 {
@@ -204,6 +205,58 @@ namespace Calculator
         private void Ceil_Click(object sender, RoutedEventArgs e)
         {
             InsertInput("ceil()", -1);
+        }
+
+        private void AddExponent_Click(object sender, RoutedEventArgs e)
+        {
+            int exp = polynomial.Children.Count;
+
+            if (exp > 1)
+            {
+                exp = (exp + 1) / 2;
+            }
+
+            Grid grid = new Grid() { HorizontalAlignment = HorizontalAlignment.Center };
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(new ColumnDefinition());
+
+            TextBox input = new TextBox()
+            {
+                Name = "exp" + exp.ToString(),
+                Style = FindResource("IntegralBoundsStyle") as Style,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Width = 75,
+                FontSize = 18
+            };
+
+            TextBlock exponent = new TextBlock()
+            {
+                Margin = new Thickness(5, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                FontSize = 18
+            };
+            Run run = new Run(exp.ToString());
+            run.Typography.Variants = FontVariants.Superscript;
+            exponent.Inlines.Add("x");
+            exponent.Inlines.Add(run);
+
+            grid.Children.Add(input);
+            grid.Children.Add(exponent);
+            Grid.SetColumn(exponent, 1);
+
+            if (exp > 0)
+            {
+                polynomial.Children.Add(new TextBlock()
+                {
+                    TextAlignment = TextAlignment.Center,
+                    FontFamily = new FontFamily("Segoe UI"),
+                    FontSize = 18,
+                    Margin = new Thickness(0, -3, 0, 0),
+                    Text = "+"
+                });
+            }
+
+            polynomial.Children.Add(grid);
         }
     }
 }

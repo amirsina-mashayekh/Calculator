@@ -92,11 +92,13 @@
                 <TextBox Style="{StaticResource IntegralBoundsStyle}" x:Name="lowerBound" Canvas.Left="35" Canvas.Top="115" />
             </Canvas>
 
-            <Button Style="{StaticResource GeneralButtons}" x:Name="addExponent" Grid.Row="1" Content="Add Exponent" BorderThickness="3" />
+            <Button Style="{StaticResource GeneralButtons}" x:Name="addExponent" Grid.Row="1" Content="Add Exponent" BorderThickness="3" Click="AddExponent_Click" />
 
             <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Margin="3">
-                <StackPanel x:Name="polunomial" Orientation="Vertical">
-                </StackPanel>
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="polynomial" Orientation="Vertical" Margin="3">
+                    </StackPanel>
+                </ScrollViewer>
             </Border>
 
             <Button Style="{StaticResource EqualsButton}" x:Name="calculateIntegral" Grid.Row="3" Content="Calculate" BorderThickness="3" />
