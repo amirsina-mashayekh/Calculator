@@ -7,7 +7,7 @@ namespace BigNumbers.Tests
     [TestClass()]
     public class BigNumberTests
     {
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void ValidationTest()
         {
             string[] ok =
@@ -68,7 +68,7 @@ namespace BigNumbers.Tests
             Assert.AreEqual(new BigNumber(-1.1M), new BigNumber("-1.1"));
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void NegationTest()
         {
             string[,] tests =
@@ -89,7 +89,7 @@ namespace BigNumbers.Tests
             }
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void Equal_NotEqualTest()
         {
             string[,] eq =
@@ -133,7 +133,7 @@ namespace BigNumbers.Tests
             }
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void CompareTest()
         {
             string[,] t1 =
@@ -164,7 +164,7 @@ namespace BigNumbers.Tests
             }
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void AdditionTest()
         {
             string[,] tests =
@@ -199,7 +199,7 @@ namespace BigNumbers.Tests
             Assert.AreEqual(new BigNumber(1), ++num0);
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void SubtractionTest()
         {
             string[,] tests =
@@ -235,7 +235,7 @@ namespace BigNumbers.Tests
             Assert.AreEqual(new BigNumber(-1), --num0);
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void MultiplicationTest()
         {
             string[,] tests =
@@ -261,7 +261,7 @@ namespace BigNumbers.Tests
             }
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void DivisionTest()
         {
             string[,] tests =
@@ -284,7 +284,7 @@ namespace BigNumbers.Tests
             _ = Assert.ThrowsException<DivideByZeroException>(() => new BigNumber(1) / new BigNumber(0));
         }
 
-        [TestMethod(), Timeout(100)]
+        [TestMethod()]
         public void ModulusTest()
         {
             string[,] tests =

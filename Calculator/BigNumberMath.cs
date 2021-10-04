@@ -35,7 +35,7 @@ namespace BigNumbers
             return n.Sign ? result + one : result;
         }
 
-        public static BigNumber DivideWithDecimals(BigNumber n, BigNumber n1, int decimals = 10)
+        public static BigNumber DivideWithDecimals(BigNumber n, BigNumber n1, int decimals = 32)
         {
             if (decimals < 0)
             {
@@ -45,12 +45,14 @@ namespace BigNumbers
             BigNumber divisioned = new BigNumber(n.Value);
             BigNumber divisor = new BigNumber(n1.Value);
 
-            for (uint i = 0; i < decimals; i++)
+            for (uint i = 0; i <= decimals; i++)
             {
                 divisioned *= ten;
             }
 
             BigNumber result = divisioned / divisor;
+            if (result.IntegralPart.Count > 1 && result.IntegralPart[^1] >= 5) { result.IntegralPart[^2]++; }
+            result.IntegralPart[^1] = 0;
             string rstr = result.Abs().Value;
 
             while (decimals >= rstr.Length)
@@ -59,7 +61,7 @@ namespace BigNumbers
                 rstr = '0' + rstr;
             }
 
-            return new BigNumber((result.Sign ? "" : "-") + rstr.Insert(rstr.Length - decimals, "."));
+            return new BigNumber((result.Sign ? "" : "-") + rstr.Insert(rstr.Length - decimals - 1, "."));
         }
 
         public static BigNumber Factorial(BigNumber n)
@@ -127,7 +129,7 @@ namespace BigNumbers
 
             bool sign = false;
 
-            for (int i = 2; i <= 10; i++)
+            for (int i = 2; i <= 32; i++)
             {
                 cos += sign ? p / f : -p / f;
                 sign = !sign;
@@ -135,21 +137,21 @@ namespace BigNumbers
                 f *= 2 * i * ((2 * i) - 1);
             }
 
-            cos = Math.Round(cos, 3);
+            cos = Math.Round(cos, 11);
 
             return new BigNumber((decimal)cos);
         }
 
         public static BigNumber Tangent(BigNumber n)
         {
-            BigNumber tan = DivideWithDecimals(Sinus(n), Cosinus(n), 3);
+            BigNumber tan = DivideWithDecimals(Sinus(n), Cosinus(n), 11);
 
             return tan;
         }
 
         public static BigNumber Cotangent(BigNumber n)
         {
-            BigNumber cot = DivideWithDecimals(Cosinus(n), Sinus(n), 3);
+            BigNumber cot = DivideWithDecimals(Cosinus(n), Sinus(n), 11);
 
             return cot;
         }
