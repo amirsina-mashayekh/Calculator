@@ -3,6 +3,7 @@
 
     <Style x:Key="GeneralButtons" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="TextElement.FontFamily" Value="Segoe UI" />
         <Setter Property="TextElement.FontSize" Value="18" />
         <Setter Property="TextElement.FontWeight" Value="Normal" />
         <Setter Property="Background" Value="#FF323130" />
@@ -95,9 +96,10 @@
     </Style>
 
     <Style x:Key="TextBoxesStyle" TargetType="{x:Type TextBox}">
-        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="BorderBrush" Value="{x:Null}" />
         <Setter Property="CaretBrush" Value="White" />
+        <Setter Property="TextElement.FontFamily" Value="Segoe UI" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -113,5 +115,19 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+            </Style>
+        </Style.Resources>
+    </Style>
+
+    <Style x:Key="IntegralBoundsStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxesStyle}">
+        <Setter Property="Width" Value="75" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Background" Value="#FF323130" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontSize" Value="16" />
+
     </Style>
 </ResourceDictionary>

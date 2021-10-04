@@ -14,6 +14,8 @@ namespace Calculator
     {
         private readonly Brush disabledColor = Brushes.Gray;
 
+        private readonly string piString = Math.PI.ToString();
+
         private BigNumber memory;
 
         public MainWindow()
@@ -80,7 +82,18 @@ namespace Calculator
 
         private void Integral_Click(object sender, RoutedEventArgs e)
         {
-            InsertInput("\u222B(,,)", -3);
+            inputRow.Height = new GridLength(0);
+            inputBox.IsEnabled = false;
+            buttonsGrid.Visibility = Visibility.Collapsed;
+            integralGrid.Visibility = Visibility.Visible;
+        }
+
+        private void BackToKeypad_Click(object sender, RoutedEventArgs e)
+        {
+            inputBox.IsEnabled = true;
+            inputRow.Height = new GridLength(2, GridUnitType.Star);
+            buttonsGrid.Visibility = Visibility.Visible;
+            integralGrid.Visibility = Visibility.Collapsed;
         }
 
         private void Power_Click(object sender, RoutedEventArgs e)
@@ -105,7 +118,7 @@ namespace Calculator
                 .ToLowerInvariant()
                 .Replace("^", "pow")
                 .Replace("%", "mod")
-                .Replace("\u03C0", Math.PI.ToString())
+                .Replace("\u03C0", piString)
                 .Replace("\u00D7", "*")
                 .Replace("\u2212", "-")
                 .Replace("\u00F7", "/")
