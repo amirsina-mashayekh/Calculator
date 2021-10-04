@@ -15,6 +15,10 @@ namespace Calculator
     {
         private readonly Brush disabledColor = Brushes.Gray;
 
+        private readonly Brush successColor = Brushes.LightGreen;
+
+        private readonly Brush errorColor = Brushes.White;
+
         private readonly string piString = Math.PI.ToString();
 
         private readonly GridLength inputHeight;
@@ -133,16 +137,16 @@ namespace Calculator
             try
             {
                 resultBox.Text = EvaluateRPN(InfixToRPN(Tokenize(expression))).Value;
-                resultBox.Foreground = Brushes.LightGreen;
+                resultBox.Foreground = successColor;
             }
             catch (ArgumentException ex)
             {
-                resultBox.Foreground = Brushes.White;
+                resultBox.Foreground = errorColor;
                 resultBox.Text = "Error: " + ex.Message;
             }
             catch (Exception)
             {
-                resultBox.Foreground = Brushes.White;
+                resultBox.Foreground = errorColor;
                 resultBox.Text = "Error: Invalid expression.";
             }
         }
@@ -163,7 +167,7 @@ namespace Calculator
 
         private void MemoryStore_Click(object sender, RoutedEventArgs e)
         {
-            if (resultBox.Foreground != disabledColor)
+            if (resultBox.Foreground == successColor)
             {
                 try
                 {
@@ -274,6 +278,13 @@ namespace Calculator
             polynomial.Children.RemoveAt(--cnt);
 
             if (cnt > 0) { polynomial.Children.RemoveAt(--cnt); }
+        }
+
+        private void CalculateIntegral_Click(object sender, RoutedEventArgs e)
+        {
+            int cnt = polynomial.Children.Count;
+
+            if (cnt == 0) { return; }
         }
     }
 }

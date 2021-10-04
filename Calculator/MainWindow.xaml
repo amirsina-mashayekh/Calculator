@@ -103,7 +103,7 @@
                 </ScrollViewer>
             </Border>
 
-            <Button Style="{StaticResource EqualsButton}" x:Name="calculateIntegral" Grid.Row="4" Content="Calculate" BorderThickness="3" />
+            <Button Style="{StaticResource EqualsButton}" x:Name="calculateIntegral" Grid.Row="4" Content="Calculate" BorderThickness="3" Click="CalculateIntegral_Click" />
             <Button Style="{StaticResource GeneralButtons}" x:Name="backToKeypad" Grid.Row="5" Content="Keypad" BorderThickness="3" Click="BackToKeypad_Click" />
         </Grid>
     </Grid>
