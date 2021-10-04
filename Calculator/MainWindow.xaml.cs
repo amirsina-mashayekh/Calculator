@@ -182,5 +182,13 @@ namespace Calculator
         {
             _ = inputBox.Focus();
         }
+
+        private void InputBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                equals.RaiseEvent(new RoutedEventArgs(Button.ClickEvent, equals));
+            }
+        }
     }
 }
