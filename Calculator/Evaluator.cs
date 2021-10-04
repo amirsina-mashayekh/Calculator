@@ -242,7 +242,7 @@ namespace Evaluation
                             }
                             catch (KeyNotFoundException)
                             {
-                                throw new FormatException("Bad operator: " + tmpToken);
+                                throw new ArgumentException("Invalid operator: " + tmpToken);
                             }
                             break;
 
