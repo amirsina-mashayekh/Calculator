@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BigNumbers;
 using static BigNumbers.BigNumberMath;
 
-namespace Calculator
+namespace Evaluation
 {
     public static class Evaluator
     {
@@ -41,6 +41,8 @@ namespace Calculator
             { "pos", new Operator("pos", (n, n1) => n, 2, true) },
             { "neg", new Operator("neg", (n, n1) => -n, 2, true) },
             { "abs", new Operator("abs", (n, n1) => n.Abs(), 0, true) },
+            { "floor", new Operator("floor", (n, n1) => Floor(n), 0, true) },
+            { "ceil", new Operator("ceil", (n, n1) => Ceil(n), 0, true) },
             { "fact", new Operator("fact", (n, n1) => Factorial(n), 0, true) },
             { "sin", new Operator("sin", (n, n1) => Sinus(n), 0, true) },
             { "cos", new Operator("cos", (n, n1) => Cosinus(n), 0, true) },
@@ -87,14 +89,7 @@ namespace Calculator
         {
             BigNumber num = stack.Pop();
 
-            if (op.Unary)
-            {
-                return op.Operate(num, null);
-            }
-            else
-            {
-                return op.Operate(stack.Pop(), num);
-            }
+            return op.Unary ? op.Operate(num, null) : op.Operate(stack.Pop(), num);
         }
 
         /// <summary>

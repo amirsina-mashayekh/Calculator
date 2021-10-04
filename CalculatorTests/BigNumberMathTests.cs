@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BigNumbers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using static BigNumbers.BigNumberMath;
 
@@ -87,7 +88,7 @@ namespace BigNumbers.Tests
             _ = Assert.ThrowsException<DivideByZeroException>(() => DivideWithDecimals(zero, zero));
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void SinusTest()
         {
             Assert.AreEqual("0", Sinus(zero).Value);
@@ -102,7 +103,7 @@ namespace BigNumbers.Tests
             Assert.AreEqual("0.5", Sinus(new BigNumber(pi / 6)).Value);
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void CosinusTest()
         {
             Assert.AreEqual("1", Cosinus(zero).Value);
@@ -117,7 +118,7 @@ namespace BigNumbers.Tests
             Assert.AreEqual("0.866", Cosinus(new BigNumber(pi / 6)).Value);
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void TangentTest()
         {
             Assert.AreEqual("0", Tangent(zero).Value);
@@ -133,7 +134,7 @@ namespace BigNumbers.Tests
             _ = Assert.ThrowsException<DivideByZeroException>(() => Tangent(new BigNumber(-pi / 2)));
         }
 
-        [TestMethod()]
+        [TestMethod(), Timeout(100)]
         public void CotangentTest()
         {
             Assert.AreEqual("0", Cotangent(new BigNumber(pi / 2)).Value);
@@ -144,6 +145,28 @@ namespace BigNumbers.Tests
             _ = Assert.ThrowsException<DivideByZeroException>(() => Cotangent(zero));
             _ = Assert.ThrowsException<DivideByZeroException>(() => Cotangent(new BigNumber(pi)));
             _ = Assert.ThrowsException<DivideByZeroException>(() => Cotangent(new BigNumber(-2 * pi)));
+        }
+
+        [TestMethod(), Timeout(100)]
+        public void FloorTest()
+        {
+            Assert.AreEqual("1", Floor(new BigNumber(1M)).Value);
+            Assert.AreEqual("1", Floor(new BigNumber(1.1M)).Value);
+            Assert.AreEqual("1", Floor(new BigNumber(1.9M)).Value);
+            Assert.AreEqual("-1", Floor(new BigNumber(-1M)).Value);
+            Assert.AreEqual("-2", Floor(new BigNumber(-1.1M)).Value);
+            Assert.AreEqual("-2", Floor(new BigNumber(-1.9M)).Value);
+        }
+
+        [TestMethod(), Timeout(100)]
+        public void CeilTest()
+        {
+            Assert.AreEqual("1", Ceil(new BigNumber(1M)).Value);
+            Assert.AreEqual("2", Ceil(new BigNumber(1.1M)).Value);
+            Assert.AreEqual("2", Ceil(new BigNumber(1.9M)).Value);
+            Assert.AreEqual("-1", Ceil(new BigNumber(-1M)).Value);
+            Assert.AreEqual("-1", Ceil(new BigNumber(-1.1M)).Value);
+            Assert.AreEqual("-1", Ceil(new BigNumber(-1.9M)).Value);
         }
     }
 }

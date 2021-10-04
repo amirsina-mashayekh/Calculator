@@ -15,6 +15,26 @@ namespace BigNumbers
 
         private static readonly BigNumber twoPi = new BigNumber((decimal)Math.PI * 2);
 
+        public static BigNumber Floor(BigNumber n)
+        {
+            BigNumber result = new BigNumber(n.Value);
+            if (n.DecimalPart.Count == 0) { return result; }
+
+            result.DecimalPart.Clear();
+
+            return n.Sign ? result : result - one;
+        }
+
+        public static BigNumber Ceil(BigNumber n)
+        {
+            BigNumber result = new BigNumber(n.Value);
+            if (n.DecimalPart.Count == 0) { return result; }
+
+            result.DecimalPart.Clear();
+
+            return n.Sign ? result + one : result;
+        }
+
         public static BigNumber DivideWithDecimals(BigNumber n, BigNumber n1, int decimals = 10)
         {
             if (decimals < 0)

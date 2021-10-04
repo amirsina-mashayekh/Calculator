@@ -1,5 +1,5 @@
 ﻿using BigNumbers;
-using static Calculator.Evaluator;
+using static Evaluation.Evaluator;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -170,14 +170,6 @@ namespace Calculator
             memoryClear.IsEnabled = false;
         }
 
-        private void Copy_Click(object sender, RoutedEventArgs e)
-        {
-            if (resultBox.Foreground != disabledColor)
-            {
-                Clipboard.SetText(resultBox.Text);
-            }
-        }
-
         private void ButtonsGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             _ = inputBox.Focus();
@@ -189,6 +181,16 @@ namespace Calculator
             {
                 equals.RaiseEvent(new RoutedEventArgs(Button.ClickEvent, equals));
             }
+        }
+
+        private void Floor_Click(object sender, RoutedEventArgs e)
+        {
+            InsertInput("floor()", -1);
+        }
+
+        private void Ceil_Click(object sender, RoutedEventArgs e)
+        {
+            InsertInput("ceil()", -1);
         }
     }
 }
