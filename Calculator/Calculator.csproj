@@ -4,6 +4,27 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <StartupObject>Calculator.App</StartupObject>
+    <ApplicationIcon>calculator.ico</ApplicationIcon>
+    <Authors>AmirSina Mashayekh</Authors>
+    <Company>Pajuhesh80</Company>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/pajuhesh80/Calculator</PackageProjectUrl>
+    <PackageIcon>calculator.ico</PackageIcon>
+    <PackageIconUrl />
+    <RepositoryUrl>https://github.com/pajuhesh80/Calculator</RepositoryUrl>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="calculator.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
