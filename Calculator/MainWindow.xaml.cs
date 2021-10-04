@@ -285,6 +285,93 @@ namespace Calculator
             int cnt = polynomial.Children.Count;
 
             if (cnt == 0) { return; }
+
+            BigNumber ub;
+            BigNumber lb;
+
+            try
+            {
+                ub = EvaluateRPN(InfixToRPN(Tokenize(upperBound.Text)));
+            }
+            catch (ArgumentException ex)
+            {
+                resultBox.Foreground = errorColor;
+                resultBox.Text = "Error in upper bound expression: " + ex.Message;
+                return;
+            }
+            catch (Exception)
+            {
+                resultBox.Foreground = errorColor;
+                resultBox.Text = "Error in upper bound expression.";
+                return;
+            }
+
+            try
+            {
+                lb = EvaluateRPN(InfixToRPN(Tokenize(lowerBound.Text)));
+            }
+            catch (ArgumentException ex)
+            {
+                resultBox.Foreground = errorColor;
+                resultBox.Text = "Error in lower bound expression: " + ex.Message;
+                return;
+            }
+            catch (Exception)
+            {
+                resultBox.Foreground = errorColor;
+                resultBox.Text = "Error in lower bound expression.";
+                return;
+            }
+
+            string ube = "";
+            string lbe = "";
+
+            for (int i = 0; i < cnt; i+= 2)
+            {
+                int exp = (i / 2) + 1;
+
+                TextBox input =
+                    (polynomial.Children[i] as Grid)
+                    .Children[0] as TextBox;
+
+                BigNumber coefficient;
+
+                try
+                {
+                    coefficient = EvaluateRPN(InfixToRPN(Tokenize(input.Text)));
+                    coefficient = BigNumberMath.DivideWithDecimals(coefficient, new BigNumber(exp));
+                }
+                catch (ArgumentException ex)
+                {
+                    resultBox.Foreground = errorColor;
+                    resultBox.Text = "Error in coefficient of exponent " + exp.ToString() + ": " + ex.Message;
+                    return;
+                }
+                catch (Exception)
+                {
+                    resultBox.Foreground = errorColor;
+                    resultBox.Text = "Error in coefficient of exponent " + exp.ToString() + '.';
+                    return;
+                }
+
+                ube += "+(" + coefficient.Value + ")*" + ub + "pow" + exp;
+                lbe += "+(" + coefficient.Value + ")*" + lb + "pow" + exp;
+            }
+
+            try
+            {
+                resultBox.Text =
+                    (EvaluateRPN(InfixToRPN(Tokenize(ube)))
+                    - EvaluateRPN(InfixToRPN(Tokenize(lbe))))
+                    .Value;
+                resultBox.Foreground = successColor;
+            }
+            catch (Exception)
+            {
+                // Should not get here at all, but just in case...
+                resultBox.Foreground = errorColor;
+                resultBox.Text = "Error: Something went wrong.";
+            }
         }
     }
 }
