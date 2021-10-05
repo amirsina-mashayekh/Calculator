@@ -13,11 +13,9 @@ namespace Calculator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Brush disabledColor = Brushes.Gray;
+        private readonly Brush placeholderColor = Brushes.Gray;
 
         private readonly Brush successColor = Brushes.LightGreen;
-
-        private readonly Brush errorColor = Brushes.White;
 
         private readonly string piString = Math.PI.ToString();
 
@@ -31,21 +29,31 @@ namespace Calculator
             inputHeight = inputRow.Height;
         }
 
+        private void ShowResult(string result, bool success)
+        {
+            resultBox.IsEnabled = true;
+
+            resultBox.Foreground = success ? successColor : Brushes.White;
+
+            resultBox.Text = result;
+        }
+
         private void ResetResultBox()
         {
-            resultBox.Foreground = disabledColor;
+            resultBox.Foreground = placeholderColor;
+            resultBox.IsEnabled = false;
             resultBox.Text = "Result";
         }
 
         private void ResetInputBox()
         {
-            inputBox.Foreground = disabledColor;
+            inputBox.Foreground = placeholderColor;
             inputBox.Text = "Input";
         }
 
         private void InsertInput(string text, int caretIndexOffset = 0)
         {
-            if (inputBox.Foreground == disabledColor)
+            if (inputBox.Foreground == placeholderColor)
             {
                 inputBox.Text = "";
                 inputBox.Foreground = Brushes.White;
@@ -58,7 +66,7 @@ namespace Calculator
 
         private void InputBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (inputBox.Foreground == disabledColor)
+            if (inputBox.Foreground == placeholderColor)
             {
                 inputBox.Clear();
                 inputBox.Foreground = Brushes.White;
@@ -124,7 +132,7 @@ namespace Calculator
 
         private void Equals_Click(object sender, RoutedEventArgs e)
         {
-            if (inputBox.Foreground == disabledColor) { return; }
+            if (inputBox.Foreground == placeholderColor) { return; }
             string expression = inputBox.Text
                 .ToLowerInvariant()
                 .Replace("^", "pow")
@@ -136,18 +144,15 @@ namespace Calculator
                 .Replace("\u222B", "integral");
             try
             {
-                resultBox.Text = EvaluateRPN(InfixToRPN(Tokenize(expression))).Value;
-                resultBox.Foreground = successColor;
+                ShowResult(EvaluateRPN(InfixToRPN(Tokenize(expression))).Value, true);
             }
             catch (ArgumentException ex)
             {
-                resultBox.Foreground = errorColor;
-                resultBox.Text = "Error: " + ex.Message;
+                ShowResult("Error: " + ex.Message, false);
             }
             catch (Exception)
             {
-                resultBox.Foreground = errorColor;
-                resultBox.Text = "Error: Invalid expression.";
+                ShowResult("Error: Invalid expression.", false);
             }
         }
 
@@ -295,14 +300,12 @@ namespace Calculator
             }
             catch (ArgumentException ex)
             {
-                resultBox.Foreground = errorColor;
-                resultBox.Text = "Error in upper bound expression: " + ex.Message;
+                ShowResult("Error in upper bound expression: " + ex.Message, false);
                 return;
             }
             catch (Exception)
             {
-                resultBox.Foreground = errorColor;
-                resultBox.Text = "Error in upper bound expression.";
+                ShowResult("Error in upper bound expression.", false);
                 return;
             }
 
@@ -312,14 +315,12 @@ namespace Calculator
             }
             catch (ArgumentException ex)
             {
-                resultBox.Foreground = errorColor;
-                resultBox.Text = "Error in lower bound expression: " + ex.Message;
+                ShowResult("Error in lower bound expression: " + ex.Message, false);
                 return;
             }
             catch (Exception)
             {
-                resultBox.Foreground = errorColor;
-                resultBox.Text = "Error in lower bound expression.";
+                ShowResult("Error in lower bound expression.", false);
                 return;
             }
 
@@ -343,14 +344,12 @@ namespace Calculator
                 }
                 catch (ArgumentException ex)
                 {
-                    resultBox.Foreground = errorColor;
-                    resultBox.Text = "Error in coefficient of exponent " + exp.ToString() + ": " + ex.Message;
+                    ShowResult("Error in coefficient of exponent " + exp.ToString() + ": " + ex.Message, false);
                     return;
                 }
                 catch (Exception)
                 {
-                    resultBox.Foreground = errorColor;
-                    resultBox.Text = "Error in coefficient of exponent " + exp.ToString() + '.';
+                    ShowResult("Error in coefficient of exponent " + exp.ToString() + '.', false);
                     return;
                 }
 
@@ -360,17 +359,15 @@ namespace Calculator
 
             try
             {
-                resultBox.Text =
+                ShowResult(
                     (EvaluateRPN(InfixToRPN(Tokenize(ube)))
                     - EvaluateRPN(InfixToRPN(Tokenize(lbe))))
-                    .Value;
-                resultBox.Foreground = successColor;
+                    .Value, true);
             }
             catch (Exception)
             {
                 // Should not get here at all, but just in case...
-                resultBox.Foreground = errorColor;
-                resultBox.Text = "Error: Something went wrong.";
+                ShowResult("Error: Something went wrong.", false);
             }
         }
     }

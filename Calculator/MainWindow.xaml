@@ -20,7 +20,7 @@
 
         <TextBox Style="{StaticResource TextBoxesStyle}" x:Name="resultBox" Text="Result" Grid.Row="1" TextWrapping="NoWrap"
                  Background="#FF201F1E" FontSize="32" Margin="0,0,0,2" HorizontalScrollBarVisibility="Auto"
-                 VerticalContentAlignment="Center" Height="75px" IsReadOnly="True" />
+                 VerticalContentAlignment="Center" Height="75px" IsReadOnly="True" IsEnabled="False" />
 
         <Grid x:Name="buttonsGrid" Grid.Row="2" KeyDown="ButtonsGrid_KeyDown">
             <Grid.RowDefinitions>
