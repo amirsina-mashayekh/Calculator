@@ -75,7 +75,7 @@ namespace Calculator
 
         private void InputBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(inputBox.Text)) ResetInputBox();
+            if (string.IsNullOrWhiteSpace(inputBox.Text)) { ResetInputBox(); }
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
@@ -160,7 +160,7 @@ namespace Calculator
         {
             int caretIndex = inputBox.CaretIndex;
 
-            if (caretIndex == 0)
+            if (caretIndex <= 1)
             {
                 ResetInputBox();
                 return;
