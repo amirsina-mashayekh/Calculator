@@ -173,7 +173,8 @@ namespace Calculator
         {
             int caretIndex = inputBox.CaretIndex;
 
-            if (caretIndex <= 1)
+            if (caretIndex == 0) { return; }
+            if (caretIndex == 1 && inputBox.Text.Length == 1)
             {
                 ResetInputBox();
                 return;
