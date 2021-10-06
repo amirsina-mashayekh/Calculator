@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BigNumbers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using static Evaluation.Evaluator;
-using BigNumbers;
-using static BigNumbers.BigNumberMath;
 using System.Linq;
+using static BigNumbers.BigNumberMath;
+using static Evaluation.Evaluator;
 
 namespace Evaluation.Tests
 {
@@ -15,6 +15,7 @@ namespace Evaluation.Tests
             "5.3 * (2 + abs(sin(-3.1415926535897931/2) + cos(3.1415926535897931/4))) " +
             "- (tan(0) + cot(3.1415926535897931/3)) + fact(4) pow 3 mod 7" +
             "+ floor(3.1415926535897931) - ceil(-3.1415926535897931)";
+
         private static readonly BigNumber _5_3 = new BigNumber(5.3M);
         private static readonly BigNumber _2 = new BigNumber(2M);
         private static readonly BigNumber pi = new BigNumber("3.1415926535897931");
@@ -41,7 +42,8 @@ namespace Evaluation.Tests
             (_5_3 * (_2 + (Sinus(DivideWithDecimals(-pi, _2)) + Cosinus(DivideWithDecimals(pi, _4))).Abs()))
             - (Tangent(_0) + Cotangent(DivideWithDecimals(pi, _3))) + (Power(Factorial(_4), _3) % _7)
             + Floor(pi) - Ceil(-pi);
-        // == 23.5759
+
+        // == 23.574983790503
 
         static EvaluatorTests()
         {

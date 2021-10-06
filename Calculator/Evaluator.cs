@@ -1,8 +1,7 @@
-﻿using System;
+﻿using BigNumbers;
+using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
-using BigNumbers;
 using static BigNumbers.BigNumberMath;
 
 namespace Evaluation
@@ -12,7 +11,7 @@ namespace Evaluation
         public class Operator
         {
             public string Token { get; }
-            public Func<BigNumber, BigNumber,BigNumber> Operate { get; }
+            public Func<BigNumber, BigNumber, BigNumber> Operate { get; }
             public int Precedence { get; }
             public bool Unary { get; }
 
@@ -177,6 +176,10 @@ namespace Evaluation
         /// <exception cref="ArgumentException"></exception>
         public static object[] Tokenize(string expression)
         {
+            Operator lpar = operators["("];
+            Operator rpar = operators[")"];
+            Operator mul = operators["*"];
+
             List<object> infix = new List<object>();
             TokenType lastTokenType = TokenType.space;
             string tmpToken = "";
@@ -190,7 +193,7 @@ namespace Evaluation
                 else if (c >= 'a' && c <= 'z') { currentTokenType = TokenType.stringOperator; }
                 else { currentTokenType = TokenType.symbolOperator; }
 
-                if (currentTokenType != lastTokenType || currentTokenType == TokenType.symbolOperator && tmpToken.Length > 0)
+                if (currentTokenType != lastTokenType || (currentTokenType == TokenType.symbolOperator && tmpToken.Length > 0))
                 {
                     switch (lastTokenType)
                     {
@@ -217,7 +220,7 @@ namespace Evaluation
                                     object prevToken =
                                         infix.Count > 0 ? infix[^1] : null;
 
-                                    if (!(prevToken is BigNumber || prevToken == operators[")"]) || prevToken == null)
+                                    if (!(prevToken is BigNumber || prevToken == rpar) || prevToken == null)
                                     {
                                         tmpToken = "pos";
                                     }
@@ -227,17 +230,10 @@ namespace Evaluation
                                     object prevToken =
                                         infix.Count > 0 ? infix[^1] : null;
 
-                                    if (!(prevToken is BigNumber || prevToken == operators[")"]) || prevToken == null)
+                                    if (!(prevToken is BigNumber || prevToken == rpar) || prevToken == null)
                                     {
                                         tmpToken = "neg";
                                     }
-                                }
-
-                                if (tmpToken == "("
-                                    && lastTokenType != TokenType.symbolOperator
-                                    && lastTokenType != TokenType.stringOperator)
-                                {
-                                    infix.Add(operators["*"]);
                                 }
 
                                 infix.Add(operators[tmpToken]);
@@ -258,6 +254,40 @@ namespace Evaluation
                 tmpToken += c;
                 lastTokenType = currentTokenType;
             }
+
+            // Insert * operators
+            for (int i = 1; i < infix.Count - 1; i++)
+            {
+                Operator token = infix[i] as Operator;
+                if (token == rpar)
+                {
+                    object outerToken = infix[i + 1];
+                    if (outerToken is BigNumber)
+                    {
+                        infix.Insert(i + 1, mul);
+                        i++;
+                    }
+                }
+                else if (token == lpar)
+                {
+                    object outerToken = infix[i - 1];
+                    if (outerToken is BigNumber || outerToken == rpar)
+                    {
+                        infix.Insert(i, mul);
+                        i++;
+                    }
+                }
+                else if (token is Operator && token.Unary)
+                {
+                    object prevToken = infix[i - 1];
+                    if (prevToken is BigNumber || (prevToken as Operator) == rpar)
+                    {
+                        infix.Insert(i, mul);
+                        i++;
+                    }
+                }
+            }
+
             return infix.ToArray();
         }
 
@@ -273,7 +303,7 @@ namespace Evaluation
         {
             try
             {
-                return await Task.Run(() => EvaluateRPN(InfixToRPN(Tokenize(expression))));;
+                return await Task.Run(() => EvaluateRPN(InfixToRPN(Tokenize(expression)))); ;
             }
             catch (Exception ex)
             {

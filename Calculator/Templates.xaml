@@ -122,7 +122,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Opacity" TargetName="border" Value="0.56"/>
+                            <Setter Property="Opacity" TargetName="border" Value="0.56" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -141,6 +141,5 @@
         <Setter Property="Background" Value="#FF323130" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="FontSize" Value="16" />
-
     </Style>
 </ResourceDictionary>

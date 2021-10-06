@@ -1,12 +1,11 @@
 ﻿using BigNumbers;
-using static Evaluation.Evaluator;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Documents;
-using System.Threading.Tasks;
-using System.Threading;
+using System.Windows.Media;
+using static Evaluation.Evaluator;
 
 namespace Calculator
 {
@@ -19,7 +18,7 @@ namespace Calculator
 
         private readonly Brush successColor = Brushes.LightGreen;
 
-        private readonly string piString = Math.PI.ToString();
+        private readonly string piString = '(' + Math.PI.ToString() + ')';
 
         private readonly GridLength inputHeight;
 
@@ -144,8 +143,7 @@ namespace Calculator
                 .Replace("\u03C0", piString)
                 .Replace("\u00D7", "*")
                 .Replace("\u2212", "-")
-                .Replace("\u00F7", "/")
-                .Replace("\u222B", "integral");
+                .Replace("\u00F7", "/");
 
             bool inputFocused = inputBox.IsFocused;
 
