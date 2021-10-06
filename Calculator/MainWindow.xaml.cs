@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Documents;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Calculator
 {
@@ -22,6 +24,8 @@ namespace Calculator
         private readonly GridLength inputHeight;
 
         private BigNumber memory;
+
+        private readonly int disableUITimeout = 250;
 
         public MainWindow()
         {
@@ -130,7 +134,7 @@ namespace Calculator
             InsertInput("abs()", -1);
         }
 
-        private void Equals_Click(object sender, RoutedEventArgs e)
+        private async void Equals_Click(object sender, RoutedEventArgs e)
         {
             if (inputBox.Foreground == placeholderColor) { return; }
             string expression = inputBox.Text
@@ -142,18 +146,29 @@ namespace Calculator
                 .Replace("\u2212", "-")
                 .Replace("\u00F7", "/")
                 .Replace("\u222B", "integral");
+
+            bool inputFocused = inputBox.IsFocused;
+
             try
             {
-                ShowResult(EvaluateRPN(InfixToRPN(Tokenize(expression))).Value, true);
+                Task<BigNumber> calc = CalculateAsync(expression);
+
+                if (await Task.WhenAny(calc, Task.Delay(disableUITimeout)) != calc)
+                {
+                    mainGrid.IsEnabled = false;
+                    resultBox.Foreground = placeholderColor;
+                    resultBox.Text = "Calculating...";
+                }
+
+                ShowResult((await calc).Value, true);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
                 ShowResult("Error: " + ex.Message, false);
             }
-            catch (Exception)
-            {
-                ShowResult("Error: Invalid expression.", false);
-            }
+
+            mainGrid.IsEnabled = true;
+            if (inputFocused) { _ = inputBox.Focus(); }
         }
 
         private void Backspace_Click(object sender, RoutedEventArgs e)
@@ -285,49 +300,60 @@ namespace Calculator
             if (cnt > 0) { polynomial.Children.RemoveAt(--cnt); }
         }
 
-        private void CalculateIntegral_Click(object sender, RoutedEventArgs e)
+        private async void CalculateIntegral_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Task<BigNumber> calc = CalculateIntegral();
+
+                if (await Task.WhenAny(calc, Task.Delay(disableUITimeout)) != calc)
+                {
+                    mainGrid.IsEnabled = false;
+                    resultBox.Foreground = placeholderColor;
+                    resultBox.Text = "Calculating...";
+                }
+
+                ShowResult((await calc).Value, true);
+            }
+            catch (Exception ex)
+            {
+                ShowResult(ex.Message, false);
+            }
+
+            mainGrid.IsEnabled = true;
+        }
+
+        private async Task<BigNumber> CalculateIntegral()
         {
             int cnt = polynomial.Children.Count;
 
-            if (cnt == 0) { return; }
+            if (cnt == 0) { throw new ArgumentException(); }
 
             BigNumber ub;
             BigNumber lb;
 
             try
             {
-                ub = EvaluateRPN(InfixToRPN(Tokenize(upperBound.Text)));
+                ub = await CalculateAsync(upperBound.Text);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                ShowResult("Error in upper bound expression: " + ex.Message, false);
-                return;
-            }
-            catch (Exception)
-            {
-                ShowResult("Error in upper bound expression.", false);
-                return;
+                throw new Exception("Error in upper bound: " + ex.Message);
             }
 
             try
             {
-                lb = EvaluateRPN(InfixToRPN(Tokenize(lowerBound.Text)));
+                lb = await CalculateAsync(lowerBound.Text);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                ShowResult("Error in lower bound expression: " + ex.Message, false);
-                return;
-            }
-            catch (Exception)
-            {
-                ShowResult("Error in lower bound expression.", false);
-                return;
+                throw new Exception("Error in lower bound: " + ex.Message);
             }
 
             string ube = "";
             string lbe = "";
 
-            for (int i = 0; i < cnt; i+= 2)
+            for (int i = 0; i < cnt; i += 2)
             {
                 int exp = (i / 2) + 1;
 
@@ -339,18 +365,11 @@ namespace Calculator
 
                 try
                 {
-                    coefficient = EvaluateRPN(InfixToRPN(Tokenize(input.Text)));
-                    coefficient = BigNumberMath.DivideWithDecimals(coefficient, new BigNumber(exp));
+                    coefficient = await CalculateAsync('(' + input.Text + ")/" + exp.ToString());
                 }
-                catch (ArgumentException ex)
+                catch (Exception ex)
                 {
-                    ShowResult("Error in coefficient of exponent " + exp.ToString() + ": " + ex.Message, false);
-                    return;
-                }
-                catch (Exception)
-                {
-                    ShowResult("Error in coefficient of exponent " + exp.ToString() + '.', false);
-                    return;
+                    throw new Exception("Error in coefficient of exponent " + exp.ToString() + ": " + ex.Message);
                 }
 
                 ube += "+(" + coefficient.Value + ")*" + ub + "pow" + exp;
@@ -359,15 +378,12 @@ namespace Calculator
 
             try
             {
-                ShowResult(
-                    (EvaluateRPN(InfixToRPN(Tokenize(ube)))
-                    - EvaluateRPN(InfixToRPN(Tokenize(lbe))))
-                    .Value, true);
+                return await CalculateAsync(ube) - await CalculateAsync(lbe);
             }
             catch (Exception)
             {
                 // Should not get here at all, but just in case...
-                ShowResult("Error: Something went wrong.", false);
+                throw new Exception("Error: Something went wrong.");
             }
         }
     }

@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="Calculator" Height="1" Width="1" MinHeight="576" MinWidth="324" Background="#FF1B1A19" Foreground="White"
         FocusManager.FocusedElement="{Binding ElementName=inputBox}">
-    <Grid Margin="5px">
+    <Grid Margin="5px" x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" x:Name="inputRow" />
             <RowDefinition Height="Auto" x:Name="resultRow" />

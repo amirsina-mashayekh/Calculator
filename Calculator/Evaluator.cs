@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using BigNumbers;
 using static BigNumbers.BigNumberMath;
 
@@ -257,6 +259,32 @@ namespace Evaluation
                 lastTokenType = currentTokenType;
             }
             return infix.ToArray();
+        }
+
+        /// <summary>
+        /// Calculates a math expression asynchronously.
+        /// </summary>
+        /// <param name="expression">The math expression. (infix notation)</param>
+        /// <returns>
+        /// A <c>Task&lt;BigNumber&gt;</c> which contains the numeric value of expression.
+        /// </returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static async Task<BigNumber> CalculateAsync(string expression)
+        {
+            try
+            {
+                return await Task.Run(() => EvaluateRPN(InfixToRPN(Tokenize(expression))));;
+            }
+            catch (Exception ex)
+            {
+                if (ex is ArithmeticException || ex is DivideByZeroException ||
+                    ex is ArgumentException || ex is FormatException)
+                {
+                    throw new ArgumentException(ex.Message);
+                }
+
+                throw new ArgumentException("Invalid expression.");
+            }
         }
     }
 }
