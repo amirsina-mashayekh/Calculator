@@ -39,7 +39,7 @@ namespace BigNumbers
             set
             {
                 MatchCollection matches = Regex.Matches(value, @"[+-]?(\d*\.)?\d+");
-                if (matches.Count != 1)
+                if (matches.Count != 1 || matches[0].ToString() != value)
                 {
                     throw new FormatException("String is not a rational number.");
                 }
@@ -47,13 +47,14 @@ namespace BigNumbers
                 IntegralPart = new List<int>();
                 DecimalPart = new List<int>();
                 Sign = value[0] != '-';
+                value = value.TrimStart(new char[] { '-', '+' });
 
                 int pointIndex = value.IndexOf('.');
                 int len = value.Length;
 
                 if (pointIndex > -1)
                 {
-                    for (int i = Sign ? 0 : 1; i < pointIndex; i++)
+                    for (int i = 0; i < pointIndex; i++)
                     {
                         IntegralPart.Add(value[i] - '0');
                     }
@@ -64,7 +65,7 @@ namespace BigNumbers
                 }
                 else
                 {
-                    for (int i = Sign ? 0 : 1; i < len; i++)
+                    for (int i = 0; i < len; i++)
                     {
                         IntegralPart.Add(value[i] - '0');
                     }

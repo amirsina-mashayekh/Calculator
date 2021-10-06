@@ -18,6 +18,8 @@ namespace BigNumbers.Tests
                 "-123654789.987456321",
                 "-1234567891123456789212345678931234567894.9876543211987654321298765432139876543214",
                 "012030.030210",
+                "+123654789",
+                "+123654789.987456321",
                 "-030210.012030",
                 "-00000.000",
                 "0000.000",
@@ -25,18 +27,16 @@ namespace BigNumbers.Tests
             };
             string[] bad =
             {
-                null,
                 "",
                 "    ",
-                "+123654789",
                 "a987654321",
                 "9876srwae54321",
                 "huyftrdt",
                 "^&RY^*576&%R&",
-                "+123654789.987456321",
                 "1gty23654789.987456321",
                 "1545864.5132458.546897",
-                "2454..143354"
+                "2454..143354",
+                "9.5."
             };
 
             foreach (string s in ok)
@@ -54,14 +54,10 @@ namespace BigNumbers.Tests
 
             foreach (string s in bad)
             {
-                try
-                {
-                    _ = new BigNumber(s);
-                    Assert.Fail();
-                }
-                catch (Exception) { }
+                _ = Assert.ThrowsException<FormatException>(() => new BigNumber(s));
             }
 
+            _ = Assert.ThrowsException<ArgumentNullException>(() => new BigNumber(null));
             Assert.AreEqual(new BigNumber(0), new BigNumber("0"));
             Assert.AreEqual(new BigNumber(1), new BigNumber("1"));
             Assert.AreEqual(new BigNumber(1.1M), new BigNumber("1.1"));
