@@ -85,7 +85,7 @@ namespace BigNumbers
         {
             if (n1.DecimalPart.Count != 0)
             {
-                throw new ArithmeticException("Decimal power is not supported yet.");
+                throw new ArithmeticException("Decimal exponent is not supported yet.");
             }
 
             if (n1 == zero && n == n1)
