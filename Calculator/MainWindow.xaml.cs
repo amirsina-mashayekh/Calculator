@@ -371,8 +371,8 @@ namespace Calculator
                     throw new Exception("Error in coefficient of exponent " + exp.ToString() + ": " + ex.Message);
                 }
 
-                ube += "+(" + coefficient.Value + ")*" + ub + "pow" + exp;
-                lbe += "+(" + coefficient.Value + ")*" + lb + "pow" + exp;
+                ube += "+(" + coefficient.Value + ")*(" + ub + ")pow" + exp.ToString();
+                lbe += "+(" + coefficient.Value + ")*(" + lb + ")pow" + exp.ToString();
             }
 
             try
