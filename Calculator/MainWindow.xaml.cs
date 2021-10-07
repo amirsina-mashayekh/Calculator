@@ -303,7 +303,7 @@ namespace Calculator
         {
             try
             {
-                Task<BigNumber> calc = CalculateIntegral();
+                Task<BigNumber> calc = CalculateIntegralAsync();
 
                 if (await Task.WhenAny(calc, Task.Delay(disableUITimeout)) != calc)
                 {
@@ -322,7 +322,7 @@ namespace Calculator
             mainGrid.IsEnabled = true;
         }
 
-        private async Task<BigNumber> CalculateIntegral()
+        private async Task<BigNumber> CalculateIntegralAsync()
         {
             int cnt = polynomial.Children.Count;
 
