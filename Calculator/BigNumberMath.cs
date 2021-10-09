@@ -129,7 +129,7 @@ namespace BigNumbers
 
             bool sign = false;
 
-            for (int i = 2; i <= 32; i++)
+            for (int i = 2; i <= 20; i++)
             {
                 cos += sign ? p / f : -p / f;
                 sign = !sign;
