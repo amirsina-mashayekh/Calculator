@@ -45,13 +45,25 @@ namespace BigNumbers
             BigNumber divisioned = new BigNumber(n.Value);
             BigNumber divisor = new BigNumber(n1.Value);
 
-            for (uint i = 0; i <= decimals; i++)
+            for (int i = 0; i <= decimals; i++)
             {
                 divisioned *= ten;
             }
 
             BigNumber result = divisioned / divisor;
-            if (result.IntegralPart.Count > 1 && result.IntegralPart[^1] >= 5) { result.IntegralPart[^2]++; }
+            if (result.IntegralPart.Count > 1 && result.IntegralPart[^1] >= 5)
+            {
+                int tempIndex = 2;
+                do
+                {
+                    result.IntegralPart[^tempIndex]++;
+                    if (result.IntegralPart[^tempIndex] > 9)
+                    {
+                        result.IntegralPart[^tempIndex] -= 10;
+                        result.IntegralPart[^++tempIndex]++;
+                    }
+                } while (result.IntegralPart[^tempIndex] > 9);
+            }
             result.IntegralPart[^1] = 0;
             string rstr = result.Abs().Value;
 
