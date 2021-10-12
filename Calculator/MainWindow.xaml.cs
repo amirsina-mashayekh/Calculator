@@ -1,8 +1,10 @@
 ﻿using BigNumbers;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media;
 using static Evaluation.Evaluator;
@@ -222,7 +224,7 @@ namespace Calculator
         {
             if (e.Key == System.Windows.Input.Key.Enter)
             {
-                equals.RaiseEvent(new RoutedEventArgs(Button.ClickEvent, equals));
+                equals.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, equals));
             }
         }
 
@@ -349,8 +351,8 @@ namespace Calculator
                 throw new Exception("Error in lower bound: " + ex.Message);
             }
 
-            string ube = "";
-            string lbe = "";
+            StringBuilder ube = new StringBuilder();
+            StringBuilder lbe = new StringBuilder();
 
             for (int i = 0; i < cnt; i += 2)
             {
@@ -371,13 +373,13 @@ namespace Calculator
                     throw new Exception("Error in coefficient of exponent " + exp.ToString() + ": " + ex.Message);
                 }
 
-                ube += "+(" + coefficient.Value + ")*(" + ub + ")pow" + exp.ToString();
-                lbe += "+(" + coefficient.Value + ")*(" + lb + ")pow" + exp.ToString();
+                _ = ube.Append("+(" + coefficient.Value + ")*(" + ub + ")pow" + exp.ToString());
+                _ = lbe.Append("+(" + coefficient.Value + ")*(" + lb + ")pow" + exp.ToString());
             }
 
             try
             {
-                return await CalculateAsync(ube) - await CalculateAsync(lbe);
+                return await CalculateAsync(ube.ToString()) - await CalculateAsync(lbe.ToString());
             }
             catch (Exception)
             {
