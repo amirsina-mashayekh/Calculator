@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace BigNumbers
 {
@@ -18,21 +19,21 @@ namespace BigNumbers
         public static BigNumber Floor(BigNumber n)
         {
             BigNumber result = new BigNumber(n.Value);
-            if (n.DecimalPart.Count == 0) { return result; }
+            if (n.DecimalPart.Length == 0) { return result; }
 
-            result.DecimalPart.Clear();
+            result = new BigNumber(result.IntegralPart);
 
-            return n.Sign ? result : result - one;
+            return n.Sign ? result : -result - one;
         }
 
         public static BigNumber Ceil(BigNumber n)
         {
             BigNumber result = new BigNumber(n.Value);
-            if (n.DecimalPart.Count == 0) { return result; }
+            if (n.DecimalPart.Length == 0) { return result; }
 
-            result.DecimalPart.Clear();
+            result = new BigNumber(result.IntegralPart);
 
-            return n.Sign ? result + one : result;
+            return n.Sign ? result + one : -result;
         }
 
         public static BigNumber DivideWithDecimals(BigNumber n, BigNumber n1, int decimals = 32)
@@ -51,34 +52,22 @@ namespace BigNumbers
             }
 
             BigNumber result = divisioned / divisor;
-            if (result.IntegralPart.Count > 1 && result.IntegralPart[^1] >= 5)
-            {
-                int tempIndex = 2;
-                do
-                {
-                    result.IntegralPart[^tempIndex]++;
-                    if (result.IntegralPart[^tempIndex] > 9)
-                    {
-                        result.IntegralPart[^tempIndex] -= 10;
-                        result.IntegralPart[^++tempIndex]++;
-                    }
-                } while (result.IntegralPart[^tempIndex] > 9);
-            }
-            result.IntegralPart[^1] = 0;
-            string rstr = result.Abs().Value;
+            StringBuilder rstr = new StringBuilder(result.Abs().Value);
 
             while (decimals >= rstr.Length)
             {
                 // Add 0s before number to be able to insert decimal point
-                rstr = '0' + rstr;
+                _ = rstr.Insert(0, '0');
             }
+            _ = rstr.Insert(rstr.Length - decimals - 1, ".");
+            if (!result.Sign) { _ = rstr.Insert(0, '-'); }
 
-            return new BigNumber((result.Sign ? "" : "-") + rstr.Insert(rstr.Length - decimals - 1, "."));
+            return new BigNumber(rstr.ToString()).Round(decimals);
         }
 
         public static BigNumber Factorial(BigNumber n)
         {
-            if (!n.Sign || n.DecimalPart.Count != 0)
+            if (!n.Sign || n.DecimalPart.Length != 0)
             {
                 throw new ArithmeticException("Factorial is only supported for zero and positive integers.");
             }
@@ -95,7 +84,7 @@ namespace BigNumbers
 
         public static BigNumber Power(BigNumber n, BigNumber n1)
         {
-            if (n1.DecimalPart.Count != 0)
+            if (n1.DecimalPart.Length != 0)
             {
                 throw new ArithmeticException("Decimal exponent is not supported yet.");
             }

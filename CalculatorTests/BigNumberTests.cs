@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using BigNumbers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 
@@ -321,6 +322,41 @@ namespace BigNumbers.Tests
             _ = Assert.ThrowsException<OverflowException>(() => new BigNumber("-79228162514264337593543950336").ToDecimal());
             _ = Assert.ThrowsException<OverflowException>(() => new BigNumber("792281625142643375935439503350").ToDecimal());
             _ = Assert.ThrowsException<OverflowException>(() => new BigNumber("-792281625142643375935439503350").ToDecimal());
+        }
+
+        [TestMethod()]
+        public void RoundTest()
+        {
+            string[,] tests =
+            {
+                { "0", "0", "0" },
+                { "0", "10", "0" },
+                { "1.2", "0", "1" },
+                { "1.1111", "3", "1.111" },
+                { "1.1111", "4", "1.1111" },
+                { "1.1111", "5", "1.1111" },
+                { "12.3456", "3", "12.346" },
+                { "12.3456", "4", "12.3456" },
+                { "12.3456", "5", "12.3456" },
+                { "-1.1111", "3", "-1.111" },
+                { "-1.1111", "4", "-1.1111" },
+                { "-1.1111", "5", "-1.1111" },
+                { "-12.3456", "3", "-12.346" },
+                { "-12.3456", "4", "-12.3456" },
+                { "-12.3456", "5", "-12.3456" }
+            };
+
+            for (int i = 0; i < tests.GetLength(0); i++)
+            {
+                BigNumber n = new BigNumber(tests[i, 0]);
+                Assert.AreEqual(tests[i, 2], n.Round(int.Parse(tests[i, 1])).Value);
+            }
+
+            BigNumber num = new BigNumber(12.3456M);
+            Assert.AreEqual("12", num.Round().Value);
+            Assert.AreEqual(num.Round().Value, num.Round(0).Value);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => num.Round(-1));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => num.Round(-10));
         }
     }
 }
