@@ -28,13 +28,13 @@ namespace BigNumbers
         {
             get
             {
-                string val = "";
+                StringBuilder val = new StringBuilder();
 
-                if (!Sign) { val += '-'; }
-                val += string.Join(null, _integralPart);
-                if (_decimalPart.Count != 0) { val += '.' + string.Join(null, _decimalPart); }
+                if (!Sign) { _ = val.Append('-'); }
+                val.Append(string.Join(null, _integralPart));
+                if (_decimalPart.Count != 0) { _ = val.Append('.' + string.Join(null, _decimalPart)); }
 
-                return val;
+                return val.ToString();
             }
             set
             {

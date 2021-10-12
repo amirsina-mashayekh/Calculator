@@ -1,6 +1,7 @@
 ﻿using BigNumbers;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using static BigNumbers.BigNumberMath;
 
@@ -182,7 +183,7 @@ namespace Evaluation
 
             List<object> infix = new List<object>();
             TokenType lastTokenType = TokenType.space;
-            string tmpToken = "";
+            StringBuilder tmpToken = new StringBuilder();
             expression += " ";      // To add the last token
 
             foreach (char c in expression)
@@ -195,6 +196,7 @@ namespace Evaluation
 
                 if (currentTokenType != lastTokenType || (currentTokenType == TokenType.symbolOperator && tmpToken.Length > 0))
                 {
+                    string tt = tmpToken.ToString();
                     switch (lastTokenType)
                     {
                         case TokenType.space:
@@ -203,11 +205,11 @@ namespace Evaluation
                         case TokenType.number:
                             try
                             {
-                                infix.Add(new BigNumber(tmpToken));
+                                infix.Add(new BigNumber(tt));
                             }
                             catch (FormatException)
                             {
-                                throw new FormatException("Bad number format: " + tmpToken);
+                                throw new FormatException("Bad number format: " + tt);
                             }
                             break;
 
@@ -215,32 +217,32 @@ namespace Evaluation
                         case TokenType.stringOperator:
                             try
                             {
-                                if (tmpToken == "+")
+                                if (tt == "+")
                                 {
                                     object prevToken =
                                         infix.Count > 0 ? infix[^1] : null;
 
                                     if (!(prevToken is BigNumber || prevToken == rpar) || prevToken == null)
                                     {
-                                        tmpToken = "pos";
+                                        tt = "pos";
                                     }
                                 }
-                                else if (tmpToken == "-")
+                                else if (tt == "-")
                                 {
                                     object prevToken =
                                         infix.Count > 0 ? infix[^1] : null;
 
                                     if (!(prevToken is BigNumber || prevToken == rpar) || prevToken == null)
                                     {
-                                        tmpToken = "neg";
+                                        tt = "neg";
                                     }
                                 }
 
-                                infix.Add(operators[tmpToken]);
+                                infix.Add(operators[tt]);
                             }
                             catch (KeyNotFoundException)
                             {
-                                throw new ArgumentException("Invalid operator: " + tmpToken);
+                                throw new ArgumentException("Invalid operator: " + tt);
                             }
                             break;
 
@@ -248,10 +250,10 @@ namespace Evaluation
                             // Should not get here at all, but just in case...
                             throw new Exception("Invalid lastToken value.");
                     }
-                    tmpToken = "";
+                    _ = tmpToken.Clear();
                 }
 
-                tmpToken += c;
+                _ = tmpToken.Append(c);
                 lastTokenType = currentTokenType;
             }
 
