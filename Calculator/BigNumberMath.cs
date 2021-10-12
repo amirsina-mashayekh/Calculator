@@ -74,9 +74,9 @@ namespace BigNumbers
 
             BigNumber result = new BigNumber(1);
 
-            for (BigNumber i = new BigNumber(2); i <= n; i++)
+            for (BigNumber i = new BigNumber(n.Value); i > one; i--)
             {
-                result *= i;
+                result = i * result;
             }
 
             return result;

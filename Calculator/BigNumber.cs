@@ -12,6 +12,8 @@ namespace BigNumbers
     {
         private static readonly BigNumber zero = new BigNumber(0);
 
+        private static readonly BigNumber one = new BigNumber(1);
+
         private static readonly BigNumber ten = new BigNumber(10);
 
         public bool Sign { get; private set; }
@@ -272,21 +274,25 @@ namespace BigNumbers
 
         public static BigNumber operator ++(BigNumber n)
         {
-            return n + new BigNumber(1);
+            return n + one;
         }
 
         public static BigNumber operator --(BigNumber n)
         {
-            return n - new BigNumber(1);
+            return n - one;
         }
 
         public static BigNumber operator *(BigNumber n, BigNumber n1)
         {
-            BigNumber result = zero.MemberwiseClone() as BigNumber;
-            List<int> lnz = new List<int>(n._integralPart);
-            lnz.AddRange(n._decimalPart);
-            List<int> mnz = new List<int>(n1._integralPart);
-            mnz.AddRange(n1._decimalPart);
+            BigNumber result = zero;
+
+            List<int> lnzl = new List<int>(n._integralPart);
+            lnzl.AddRange(n._decimalPart);
+            int[] lnz = lnzl.ToArray();
+
+            List<int> mnzl = new List<int>(n1._integralPart);
+            mnzl.AddRange(n1._decimalPart);
+            int[] mnz = mnzl.ToArray();
 
             // Put number with less non-zero characters in lnz
             int nnz = 0;
@@ -301,13 +307,13 @@ namespace BigNumbers
             }
             if (nnz > n1nz)
             {
-                List<int> tmp = new List<int>(lnz);
+                int[] tmp = lnz;
                 lnz = mnz;
                 mnz = tmp;
             }
 
-            int llen = lnz.Count;
-            int glen = mnz.Count;
+            int llen = lnz.Length;
+            int glen = mnz.Length;
             int carry = 0;
             for (int i = llen - 1; i >= 0; i--)
             {
@@ -556,8 +562,8 @@ namespace BigNumbers
         {
             if (n1 == zero) { throw new DivideByZeroException(); }
 
-            BigNumber divisioned = (n.MemberwiseClone() as BigNumber).Abs();
-            BigNumber divisor = (n1.MemberwiseClone() as BigNumber).Abs();
+            BigNumber divisioned = n.Abs();
+            BigNumber divisor = n1.Abs();
             BigNumber result = new BigNumber();
 
             // Get rid of decimals
@@ -567,7 +573,7 @@ namespace BigNumbers
                 divisor *= ten;
             }
 
-            BigNumber rem = zero.MemberwiseClone() as BigNumber;
+            BigNumber rem = zero;
             while (divisioned._integralPart.Count > 0 || divisioned > divisor)
             {
                 BigNumber tempDiv = new BigNumber()
